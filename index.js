@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { ApolloServer } = require('apollo-server-express');
 
+
+const { SECRET, SECRET2 } = require('./config');
+
 const port = 8000;
 const { MONGODB } = require('./config.js');
 
@@ -11,7 +14,7 @@ const resolvers = require('./resolvers/rootResolver.js');
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({req}) => req,
+    context: { SECRET, SECRET2 }
 });
  
 const app = express();

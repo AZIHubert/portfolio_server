@@ -1,6 +1,6 @@
 const { model, Schema } = require('mongoose');
 
-const blockSchema = new Schema({
+const contentSchema = new Schema({
     block: {
         type: Schema.Types.ObjectId,
         ref: 'Block'
@@ -28,4 +28,4 @@ const blockSchema = new Schema({
     }
 });
 
-module.exports = model('Block', blockSchema);
+module.exports = model('Content', contentSchema);
