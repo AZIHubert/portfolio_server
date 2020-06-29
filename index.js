@@ -24,7 +24,8 @@ const connect = async () => {
     try{
         await mongoose.connect(MONGODB, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            useCreateIndex: true
         });
         console.log('Connected to mongo ATLAS');
         app.listen({ port }, () => console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`));
