@@ -2,13 +2,14 @@ module.exports = `
     type User{
         _id: ID!
         username: String!
-        firstName: String!
-        lastName: String!
+        firstname: String!
+        lastname: String!
         email: String!
         password: String!
         createdAt: String!
         isAdmin: Boolean!
         profilePicture: Image
+        isActive: Boolean!
     }
     type registerResponse{
         OK: Boolean!
@@ -27,7 +28,7 @@ module.exports = `
         getUser(userId: ID!): User!
     }
     type Mutation{
-        createUser(email: String!, username: String!, password: String!, confirmPassword: String!, firstName: String!, lastName: String!, passwordRegistration: String!): registerResponse!
+        createUser(email: String!, username: String!, password: String!, confirmPassword: String!, firstname: String!, lastname: String!, passwordRegistration: String!): registerResponse!
         loginUser(emailOrUsername: String!, password: String!): loginResponse!
     }
 `;

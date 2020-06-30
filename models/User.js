@@ -21,12 +21,12 @@ const userSchema = new Schema({
         min: [4, 'Need to be at least 4 characters'],
         max: [15, 'Need to be at most 15 characters']
     },
-    firstName: {
+    firstname: {
         type: String,
         trim: true,
         required: 'Can\'t be empty',
     },
-    lastName: {
+    lastname: {
         type: String,
         trim: true,
         required:  'Can\'t be empty',
@@ -47,11 +47,22 @@ const userSchema = new Schema({
         max: [25, 'Need to be at most 25 characters']
 
     },
-    createdAt: String,
-    isAdmin: Boolean,
+    createdAt: {
+        type: String,
+        default: new Date().toISOString()
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    isActive: {
+        type: Boolean,
+        default: false
+    },
     profilePicture: {
         type: Schema.Types.ObjectId,
-        ref: 'Image'
+        ref: 'Image',
+        default: null
     }
 });
 

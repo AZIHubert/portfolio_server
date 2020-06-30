@@ -6,12 +6,8 @@ module.exports = {
     Query: {
         async getUsers() {
             try {
-                try {
-                    let users = await User.find();
-                    return transformUser(users);
-                } catch(err) {
-                    throw new Error(err);
-                }
+                let users = await User.find();
+                return users.map(user => transformUser(user));
             } catch (err) {
                 console.log(err);
             }
@@ -26,15 +22,10 @@ module.exports = {
         }
     },
     Mutation: {
-        createUser: async (_, { ...params}) => {
+        createUser: async (_, { ...params }, context) => {
             const errors = [];
             try {
-                const newUser = new User({
-                    ...params,
-                    createdAt: new Date().toISOString(),
-                    admin: false,
-                    profilePicture: null
-                });
+                const newUser = new User({...params});
                 const savedUser = await newUser.save();
                 return {
                     OK: true,
@@ -42,7 +33,7 @@ module.exports = {
                     user: transformUser(savedUser)
                 };
             } catch(err) {
-                console.log(err);
+                // console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -59,7 +50,7 @@ module.exports = {
                 }
             }
         },
-        loginUser: async  (_, {emailOrUsername, password}, { SECRET, SECRET2 }) => tryLogin(emailOrUsername, password, SECRET, SECRET2)
+        loginUser: async  (_, { emailOrUsername, password }, { SECRET, SECRET2 }) => tryLogin(emailOrUsername, password, SECRET, SECRET2)
         // async editeUser() {
 
         // },
