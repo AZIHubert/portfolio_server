@@ -5,6 +5,7 @@ module.exports = `
         title: String!
         titleColor: String!
         date: Int!
+        type: Type
         display: Boolean!
         thumbnail: Image
         parts: [Part]
@@ -12,5 +13,17 @@ module.exports = `
         createdBy: User!
         updatedAt: String
         updatedBy: User
+    }
+    type createResponse{
+        OK: Boolean!
+        project: Project
+        errors: [Error!]
+    }
+    type Query{
+        getProjects: [Project!]
+        getProject(projectId: ID): Project!
+    }
+    type Mutation{
+        createProject(title: String!, date: Int, titleColor: String, display: Boolean, type: ID, thumbnail: Upload): createResponse!
     }
 `;

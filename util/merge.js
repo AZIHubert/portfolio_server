@@ -8,6 +8,7 @@ const Image = require('../models/Image');
 const Part = require('../models/Part');
 const Project = require('../models/Project');
 const Traineeship = require('../models/Traineeship');
+const Type = require('../models/Type');
 const User = require('../models/User');
 const Workshop = require('../models/Workshop');
 
@@ -270,8 +271,9 @@ const transformProject = project => ({
     _id: project._id,
     thumbnail: () => imageGetter(project.thumbnail),
     parts: () => partsGetter(project.parts),
-    createdBy: () => userGetter(content.createdBy),
-    updatedBy: () => userGetter(content.updatedBy)
+    createdBy: () => userGetter(project.createdBy),
+    updatedBy: () => userGetter(project.updatedBy),
+    types: () => typesGetter(project.types)
 });
 const projectLoader = new DataLoader(projectId => project(projectId));
 const project = async projectId => {
@@ -323,7 +325,7 @@ const traineeship = async traineeshipId => {
         throw new Error(err);
     }
 };
-const traineeshipsLoader = new DataLoader(traineeshipIds => degrees(traineeshipIds));
+const traineeshipsLoader = new DataLoader(traineeshipIds => traineeships(traineeshipIds));
 const traineeships = async traineeshipIds => {
     try {
         const traineeships = await Promise.all(traineeshipIds.map(traineeshipId => Traineeship.findById(traineeshipId)));
@@ -344,6 +346,48 @@ const traineeshipsGetter = async function(traineeshipIds){
     if(!!traineeshipIds.length) traineeships = await traineeshipsLoader.loadMany(traineeshipIds);
     else traineeships = [];
     return traineeships;
+};
+
+// .................................................
+// Type 
+const transformType = type => ({
+    ...type._doc,
+    _id: type._id,
+    createdBy: () => userGetter(traineeship.createdBy),
+    updatedBy: () => userGetter(traineeship.updatedBy),
+    projects: () => projectsGetter(type.projects)
+});
+const typeLoader = new DataLoader(typeId => type(typeId));
+const type = async typeId => {
+    try {
+        const type = await Type.findById(typeId);
+        return transformType(type);
+    } catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+};
+const typesLoader = new DataLoader(typeIds => types(typeIds));
+const types = async typeIds => {
+    try {
+        const types = await Promise.all(typeIds.map(typeId => Type.findById(typeId)));
+        return types.map(type => transformType(type));
+    } catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+};
+const typeGetter = async function(typeId){
+    let type;
+    if(typeId) type = await typeLoader.load(typeId);
+    else type = null;
+    return type;
+};
+const typesGetter = async function(typeIds){
+    let types;
+    if(!!typeIds.length) types = await typesLoader.loadMany(typeIds);
+    else types = [];
+    return types;
 };
 
 // .................................................

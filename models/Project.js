@@ -2,7 +2,10 @@ const { model, Schema } = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const projectSchema = new Schema({
-    index: Number,
+    index: {
+        type: Number,
+        default: 0
+    },
     title: {
         type: String,
         unique: true,
@@ -33,7 +36,11 @@ const projectSchema = new Schema({
     editedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    types: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Type'
+    }]
 }, {
     timestamps: true
 });

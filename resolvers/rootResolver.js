@@ -1,10 +1,13 @@
-const userResolvers = require('./subResolvers/user.js');
+const userResolver = require('./subResolvers/userResolver.js');
+const projectResolver = require('./subResolvers/projectResolver');
 
 module.exports = {
     Query: {
-        ...userResolvers.Query
+        ...userResolver.Query,
+        ...projectResolver.Query
     },
     Mutation: {
-        ...userResolvers.Mutation
+        ...userResolver.Mutation,
+        ...projectResolver.Mutation
     }
 }

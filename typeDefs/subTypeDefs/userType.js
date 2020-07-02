@@ -25,7 +25,7 @@ module.exports = `
     }
     
     type Query{
-        getUsers: [User]!
+        getUsers: [User!]
         getUser(userId: ID!): User!
     }
     type Mutation{

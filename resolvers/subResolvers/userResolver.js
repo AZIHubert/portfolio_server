@@ -33,7 +33,7 @@ module.exports = {
                     user: transformUser(savedUser)
                 };
             } catch(err) {
-                // console.log(err);
+                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
