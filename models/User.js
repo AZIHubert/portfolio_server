@@ -47,10 +47,6 @@ const userSchema = new Schema({
         max: [25, 'Need to be at most 25 characters']
 
     },
-    createdAt: {
-        type: String,
-        default: new Date().toISOString()
-    },
     isAdmin: {
         type: Boolean,
         default: false
@@ -64,9 +60,11 @@ const userSchema = new Schema({
         ref: 'Image',
         default: null
     }
+}, {
+    timestamps: true
 });
 
-userSchema.plugin(uniqueValidator, { message: '{PATH} already exist.' })
+userSchema.plugin(uniqueValidator, { message: '{PATH} already exist.' });
 
 userSchema.virtual('confirmPassword')
     .get(() =>  this._confirmPassword)

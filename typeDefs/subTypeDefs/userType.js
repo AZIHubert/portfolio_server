@@ -7,6 +7,7 @@ module.exports = `
         email: String!
         password: String!
         createdAt: String!
+        updatedAt: String!
         isAdmin: Boolean!
         profilePicture: Image
         isActive: Boolean!

@@ -9,5 +9,9 @@ module.exports = `
         color: String
         variant: String
         textAlign: String!
+        createdAt: String!
+        createdBy: User!
+        updatedAt: String
+        updatedBy: User
     }
 `;

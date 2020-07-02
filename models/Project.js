@@ -1,11 +1,23 @@
 const { model, Schema } = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const projectSchema = new Schema({
     index: Number,
-    title: String,
+    title: {
+        type: String,
+        unique: true,
+        required: 'Can\'t be empty',
+        trim: true
+    },
     date: Number,
-    titleColor: String,
-    display: Boolean,
+    titleColor: {
+        type: String,
+        default: '#000000'
+    },
+    display: {
+        type: Boolean,
+        default: true
+    },
     thumbnail: {
         type: Schema.Types.ObjectId,
         ref: 'Image'
@@ -14,16 +26,18 @@ const projectSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Part'
     },
-    createdAt: String,
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    editedAt: String,
     editedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+}, {
+    timestamps: true
 });
+
+projectSchema.plugin(uniqueValidator, { message: '{PATH} already exist.' });
 
 module.exports = model('Project', projectSchema);

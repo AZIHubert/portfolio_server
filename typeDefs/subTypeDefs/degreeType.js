@@ -8,7 +8,7 @@ module.exports = `
         year: Int!
         createdAt: String!
         createdBy: User!
-        editedAt: String
-        editedBy: User
+        updatedAt: String
+        updatedBy: User
     }
 `;

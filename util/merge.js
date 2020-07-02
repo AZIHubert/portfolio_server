@@ -19,7 +19,7 @@ const transformBlock = block => ({
     part: () => partGetter(block.part),
     contents: () => contentsGetter(block.content),
     createdBy: () => userGetter(block.createdBy),
-    editedBy: () => userGetter(block.editedBy)
+    updatedBy: () => userGetter(block.updatedBy)
 });
 const blockLoader = new DataLoader(blockId => block(blockId));
 const block = async blockId => {
@@ -61,7 +61,7 @@ const transformContent = content => ({
     _id: content._id,
     image: () => imageGetter(content.image),
     createdBy: () => userGetter(content.createdBy),
-    editedBy: () => userGetter(content.editedBy)
+    updatedBy: () => userGetter(content.updatedBy)
 });
 const contentLoader = new DataLoader(contentId => content(contentId));
 const content = async contentId => {
@@ -102,7 +102,7 @@ const transformDegree = degree => ({
     ...degree._doc,
     _id: degree._id,
     createdBy: () => userGetter(block.createdBy),
-    editedBy: () => userGetter(block.editedBy)
+    updatedBy: () => userGetter(block.updatedBy)
 });
 const degreeLoader = new DataLoader(degreeId => degree(degreeId));
 const degree = async degreeId => {
@@ -143,7 +143,7 @@ const transformEmployment = employment => ({
     ...employment._doc,
     _id: employment._id,
     createdBy: () => userGetter(employment.createdBy),
-    editedBy: () => userGetter(employment.editedBy)
+    updatedBy: () => userGetter(employment.updatedBy)
 });
 const employmentLoader = new DataLoader(employmentId => employment(employmentId));
 const employment = async employmentId => {
@@ -228,7 +228,7 @@ const transformPart = part => ({
     project: () => projectGetter(part.project),
     blocks: () => blocksGetter(part.blocks),
     createdBy: () => userGetter(part.createdBy),
-    editedBy: () => userGetter(part.editedBy)
+    updatedBy: () => userGetter(part.updatedBy)
 });
 const partLoader = new DataLoader(partId => part(partId));
 const part = async partId => {
@@ -271,7 +271,7 @@ const transformProject = project => ({
     thumbnail: () => imageGetter(project.thumbnail),
     parts: () => partsGetter(project.parts),
     createdBy: () => userGetter(content.createdBy),
-    editedBy: () => userGetter(content.editedBy)
+    updatedBy: () => userGetter(content.updatedBy)
 });
 const projectLoader = new DataLoader(projectId => project(projectId));
 const project = async projectId => {
@@ -311,7 +311,7 @@ const transformTraineeship = traineeship => ({
     ...traineeship._doc,
     _id: traineeship._id,
     createdBy: () => userGetter(traineeship.createdBy),
-    editedBy: () => userGetter(traineeship.editedBy)
+    updatedBy: () => userGetter(traineeship.updatedBy)
 });
 const traineeshipLoader = new DataLoader(traineeshipId => traineeship(traineeshipId));
 const traineeship = async traineeshipId => {
@@ -391,7 +391,7 @@ const transformWorkshop = workshop => ({
     ...workshop._doc,
     _id: workshop._id,
     createdBy: () => userGetter(workshop.createdBy),
-    editedBy: () => userGetter(workshop.editedBy)
+    updatedBy: () => userGetter(workshop.updatedBy)
 });
 const workshopLoader = new DataLoader(workshopId => workshop(workshopId));
 const workshop = async workshopId => {

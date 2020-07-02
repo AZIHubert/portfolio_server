@@ -10,7 +10,7 @@ module.exports = `
         parts: [Part]
         createdAt: String!
         createdBy: User!
-        editedAt: String
-        editedBy: User
+        updatedAt: String
+        updatedBy: User
     }
 `;

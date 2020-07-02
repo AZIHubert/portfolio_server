@@ -12,7 +12,7 @@ module.exports = `
         block: [Block]
         createdAt: String!
         createdBy: User!
-        editedAt: String
-        editedBy: User
+        updatedAt: String
+        updatedBy: User
     }
 `;
