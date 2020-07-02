@@ -15,7 +15,7 @@ const projectSchema = new Schema({
     date: Number,
     titleColor: {
         type: String,
-        default: '#000000'
+        default: '#1e0a14'
     },
     display: {
         type: Boolean,
