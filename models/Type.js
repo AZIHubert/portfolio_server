@@ -5,8 +5,11 @@ const typeSchema = new Schema({
     title: {
         type: String,
         unique: true,
-        require: 'Can\'t be empty',
-        trim: true
+        uniqueCaseInsensitive: true,
+        required: 'Can\'t be empty',
+        trim: true,
+        minlength: [2, 'Need to be at least 2 characters'],
+        maxlength: [30, 'Need to be at most 30 characters']
     },
     projects: [{
         type: Schema.Types.ObjectId,

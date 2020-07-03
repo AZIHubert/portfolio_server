@@ -8,4 +8,16 @@ module.exports = `
         updatedAt: String
         updatedBy: User
     }
+    type createTypeResponse{
+        OK: Boolean
+        type: Type
+        errors: [Error!]
+    }
+    type Query{
+        getTypes: [Type!]
+        getType(typeId: ID): Type!
+    }
+    type Mutation{
+        createType(title: String!): createTypeResponse!
+    }
 `;

@@ -18,8 +18,8 @@ const userSchema = new Schema({
         trim: true,
         unique: true,
         required: 'Can\'t be empty',
-        min: [4, 'Need to be at least 4 characters'],
-        max: [15, 'Need to be at most 15 characters']
+        minlength: [4, 'Need to be at least 4 characters'],
+        maxlength: [15, 'Need to be at most 15 characters']
     },
     firstname: {
         type: String,
@@ -43,8 +43,8 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: 'Can\'t be empty',
-        min: [8, 'Need to be at least 8 characters'],
-        max: [25, 'Need to be at most 25 characters']
+        minlength: [8, 'Need to be at least 8 characters'],
+        maxlength: [25, 'Need to be at most 25 characters']
 
     },
     isAdmin: {

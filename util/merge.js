@@ -479,5 +479,6 @@ module.exports.transformImage = transformImage;
 module.exports.transformPart = transformPart;
 module.exports.transformProject = transformProject;
 module.exports.transformTraineeship = transformTraineeship;
+module.exports.transformType = transformType;
 module.exports.transformUser = transformUser;
 module.exports.transformWorkshop = transformWorkshop;

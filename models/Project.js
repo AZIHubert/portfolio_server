@@ -2,21 +2,22 @@ const { model, Schema } = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const projectSchema = new Schema({
-    index: {
-        type: Number,
-        default: 0
-    },
     title: {
         type: String,
         unique: true,
+        uniqueCaseInsensitive: true,
         required: 'Can\'t be empty',
         trim: true
     },
-    date: Number,
     titleColor: {
         type: String,
         default: '#1e0a14'
     },
+    index: {
+        type: Number,
+        default: 0
+    },
+    date: Number,
     display: {
         type: Boolean,
         default: true

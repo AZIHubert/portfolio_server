@@ -1,38 +1,35 @@
-const Project = require('../../models/Project');
-const { transformProject } = require('../../util/merge');
+const Type = require('../../models/Type');
+const { transformType } = require('../../util/merge');
 
 module.exports = {
     Query: {
-        async getProjects() {
+        async getTypes() {
             try {
-                let projects = await Project.find();
-                return projects.map(project => transformProject(project));
+                let types = await Type.find();
+                return types.map(type => transformType(type));
             } catch (err) {
                 console.log(err);
             }
         },
-        async getProject(_, { projectId }){
+        async getType(_, { typeId }){
             try {
-                let project = await Project.findById(projectId);
-                return transformProject(project);
+                let type = await Type.findById(typeId);
+                return transformType(type);
             } catch(err) {
                 throw new Error(err);
             }
         }
     },
     Mutation: {
-        createProject: async (_, { ...params }, context) => {
+        createType: async (_, { ...params }, context) => {
             const errors = [];
             try {
-                const newProject = new Project({...params});
-                await Project.updateMany({
-                    $inc: {index: 1}
-                });
-                const savedProject = await newProject.save();
+                const newType = new Type({...params});
+                const saveType = await newType.save();
                 return {
                     OK: true,
                     errors,
-                    project: transformProject(savedProject)
+                    type: transformType(newType)
                 };
             } catch(err) {
                 console.log(err);
@@ -52,11 +49,5 @@ module.exports = {
                 }
             }
         },
-        // async editeProject() {
-
-        // },
-        // async deleteProject() {
-
-        // }
     }
 }
