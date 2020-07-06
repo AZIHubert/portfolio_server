@@ -1,5 +1,6 @@
 const Project = require('../../models/Project');
 const Image = require('../../models/Image');
+const Type = require('../../models/Type');
 const { transformProject } = require('../../util/merge');
 
 module.exports = {
@@ -22,19 +23,30 @@ module.exports = {
         }
     },
     Mutation: {
-        createProject: async (_, { thumbnail, ...params }, context) => {
+        createProject: async (_, { types, thumbnail, ...params }, context) => {
             const errors = [];
             try {
-                const newProject = new Project({thumbnail, ...params});
+                const newProject = new Project({
+                    types,
+                    thumbnail,
+                    ...params,
+                    parts: []
+                });
                 await Project.updateMany({
                     $inc: {index: 1}
                 });
                 const savedProject = await newProject.save();
                 if(thumbnail){
                     const image = await Image.findById(thumbnail);
-                    console.log('image', image);
                     image.projects.push(savedProject._id);
                     await image.save();
+                }
+                if(types.length){
+                    const saveTypes = await Promise.all(types.map(typeId => Type.findById(typeId)));
+                    saveTypes.forEach(type => {
+                        type.projects.push(savedProject._id);
+                    });
+                    await Promise.all(saveTypes.map(type => type.save()));
                 }
                 return {
                     OK: true,

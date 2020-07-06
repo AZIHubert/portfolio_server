@@ -39,7 +39,6 @@ module.exports = {
     Mutation: {
         async uploadImage(_, { upload }, context){
             try {
-                console.log(upload);
                 const { createReadStream } = await upload;
                 const fileStream = createReadStream();
                 const file = await new Promise((resolve, reject) => {
@@ -77,13 +76,7 @@ module.exports = {
                 await cloudinary.uploader.destroy(image.filename,  {
                     type: "authenticated"
                 },(err, res) => {
-                    if(err){
-                        console.log(err);
-                        throw new Error(err);
-                    }
-                    if(res){
-                        console.log(res)
-                    }
+                    if(err) throw new Error(err);
                 });
                 await image.delete();
                 await Project.updateMany({

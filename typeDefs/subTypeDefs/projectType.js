@@ -5,7 +5,7 @@ module.exports = `
         title: String!
         titleColor: String!
         date: Int!
-        types: [Type]
+        types: [Type!]
         display: Boolean!
         thumbnail: Image
         parts: [Part]
@@ -24,6 +24,6 @@ module.exports = `
         getProject(projectId: ID): Project!
     }
     type Mutation{
-        createProject(title: String!, date: Int, titleColor: String, display: Boolean, typeIds: [ID], thumbnail: Upload): createProjectResponse!
+        createProject(title: String!, date: Int, titleColor: String, display: Boolean, types: [ID], thumbnail: ID): createProjectResponse!
     }
 `;

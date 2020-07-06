@@ -22,16 +22,6 @@ const transformBlock = block => ({
     createdBy: () => userGetter(block.createdBy),
     updatedBy: () => userGetter(block.updatedBy)
 });
-const blockLoader = new DataLoader(blockId => block(blockId));
-const block = async blockId => {
-    try {
-        const block = await Block.findById(blockId);
-        return transformBlock(block);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const blocksLoader = new DataLoader(blockIds => blocks(blockIds));
 const blocks = async blockIds => {
     try {
@@ -44,7 +34,7 @@ const blocks = async blockIds => {
 };
 const blockGetter = async function(blockId){
     let block;
-    if(blockId) block = await blockLoader.load(blockId);
+    if(blockId) block = await blocksLoader.load(blockId);
     else block = null;
     return block;
 };
@@ -64,16 +54,6 @@ const transformContent = content => ({
     createdBy: () => userGetter(content.createdBy),
     updatedBy: () => userGetter(content.updatedBy)
 });
-const contentLoader = new DataLoader(contentId => content(contentId));
-const content = async contentId => {
-    try {
-        const content = await Content.findById(contentId);
-        return transformContent(content);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const contentsLoader = new DataLoader(contentIds => contents(contentIds));
 const contents = async contentIds => {
     try {
@@ -86,7 +66,7 @@ const contents = async contentIds => {
 };
 const contentGetter = async function(contentId){
     let content;
-    if(contentId) content = await contentLoader.load(contentId);
+    if(contentId) content = await contentsLoader.load(contentId);
     else content = null;
     return content;
 };
@@ -105,16 +85,6 @@ const transformDegree = degree => ({
     createdBy: () => userGetter(block.createdBy),
     updatedBy: () => userGetter(block.updatedBy)
 });
-const degreeLoader = new DataLoader(degreeId => degree(degreeId));
-const degree = async degreeId => {
-    try {
-        const degree = await Degree.findById(blockId);
-        return transformDegree(degree);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const degreesLoader = new DataLoader(degreeIds => degrees(degreeIds));
 const degrees = async degreeIds => {
     try {
@@ -127,13 +97,13 @@ const degrees = async degreeIds => {
 };
 const degreeGetter = async function(degreeId){
     let degree;
-    if(degreeId) degree = await degreeLoader.load(degreeId);
+    if(degreeId) degree = await degreesLoader.load(degreeId);
     else degree = null;
     return degree;
 };
 const degreesGetter = async function(degreeIds){
     let degrees;
-    if(!!degreeIds.length) degrees = await blocksLoader.loadMany(degreeIds);
+    if(!!degreeIds.length) degrees = await degreesLoader.loadMany(degreeIds);
     else degrees = [];
     return degrees;
 };
@@ -146,16 +116,6 @@ const transformEmployment = employment => ({
     createdBy: () => userGetter(employment.createdBy),
     updatedBy: () => userGetter(employment.updatedBy)
 });
-const employmentLoader = new DataLoader(employmentId => employment(employmentId));
-const employment = async employmentId => {
-    try {
-        const employment = await Employment.findById(employmentId);
-        return transformEmployment(employment);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const employmentsLoader = new DataLoader(employmentIds => degrees(employmentIds));
 const employments = async employmentIds => {
     try {
@@ -168,7 +128,7 @@ const employments = async employmentIds => {
 };
 const employmentGetter = async function(employmentId){
     let employment;
-    if(employmentId) employment = await employmentLoader.load(employmentId);
+    if(employmentId) employment = await employmentsLoader.load(employmentId);
     else employment = null;
     return employment;
 };
@@ -189,16 +149,6 @@ const transformImage = image => ({
     contents: () => contentsGetter(image.contents),
     user: () => userGetter(image.user)
 });
-const imageLoader = new DataLoader(imageId => image(imageId));
-const image = async imageId => {
-    try {
-        const image = await Image.findById(imageId);
-        return transformImage(image);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const imagesLoader = new DataLoader(imageIds => images(imageIds));
 const images = async imageIds => {
     try {
@@ -210,7 +160,7 @@ const images = async imageIds => {
 };
 const imageGetter = async function(imageId){
     let image;
-    if(imageId) image = await imageLoader.load(imageId);
+    if(imageId) image = await imagesLoader.load(imageId);
     else image = null;
     return image;
 };
@@ -231,16 +181,6 @@ const transformPart = part => ({
     createdBy: () => userGetter(part.createdBy),
     updatedBy: () => userGetter(part.updatedBy)
 });
-const partLoader = new DataLoader(partId => part(partId));
-const part = async partId => {
-    try {
-        const part = await Part.findById(partId);
-        return transformPart(part);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const partsLoader = new DataLoader(partIds => parts(partIds));
 const parts = async partIds => {
     try {
@@ -253,7 +193,7 @@ const parts = async partIds => {
 };
 const partGetter = async function(partId){
     let part;
-    if(partId) part = await partLoader.load(partId);
+    if(partId) part = await partsLoader.load(partId);
     else part = null;
     return part;
 };
@@ -266,8 +206,7 @@ const partsGetter = async function(partIds){
 
 // .................................................
 // Project
-const transformProject = project => ({
-    ...project._doc,
+const transformProject = project => ({...project._doc,
     _id: project._id,
     thumbnail: () => imageGetter(project.thumbnail),
     parts: () => partsGetter(project.parts),
@@ -275,16 +214,6 @@ const transformProject = project => ({
     updatedBy: () => userGetter(project.updatedBy),
     types: () => typesGetter(project.types)
 });
-const projectLoader = new DataLoader(projectId => project(projectId));
-const project = async projectId => {
-    try {
-        const project = await Project.findById(projectId);
-        return transformProject(project);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const projectsLoader = new DataLoader(projectIds => projects(projectIds));
 const projects = async projectIds => {
     try {
@@ -296,7 +225,7 @@ const projects = async projectIds => {
 };
 const projectGetter = async function(projectId){
     let project;
-    if(projectId) project = await projectLoader.load(projectId);
+    if(projectId) project = await projectsLoader.load(projectId);
     else project = null;
     return project;
 };
@@ -315,16 +244,6 @@ const transformTraineeship = traineeship => ({
     createdBy: () => userGetter(traineeship.createdBy),
     updatedBy: () => userGetter(traineeship.updatedBy)
 });
-const traineeshipLoader = new DataLoader(traineeshipId => traineeship(traineeshipId));
-const traineeship = async traineeshipId => {
-    try {
-        const traineeship = await Traineeship.findById(traineeshipId);
-        return transformTraineeship(traineeship);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const traineeshipsLoader = new DataLoader(traineeshipIds => traineeships(traineeshipIds));
 const traineeships = async traineeshipIds => {
     try {
@@ -337,7 +256,7 @@ const traineeships = async traineeshipIds => {
 };
 const traineeshipGetter = async function(traineeshipId){
     let traineeship;
-    if(traineeshipId) traineeship = await traineeshipLoader.load(traineeshipId);
+    if(traineeshipId) traineeship = await traineeshipsLoader.load(traineeshipId);
     else traineeship = null;
     return traineeship;
 };
@@ -357,16 +276,6 @@ const transformType = type => ({
     updatedBy: () => userGetter(traineeship.updatedBy),
     projects: () => projectsGetter(type.projects)
 });
-const typeLoader = new DataLoader(typeId => type(typeId));
-const type = async typeId => {
-    try {
-        const type = await Type.findById(typeId);
-        return transformType(type);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const typesLoader = new DataLoader(typeIds => types(typeIds));
 const types = async typeIds => {
     try {
@@ -379,7 +288,7 @@ const types = async typeIds => {
 };
 const typeGetter = async function(typeId){
     let type;
-    if(typeId) type = await typeLoader.load(typeId);
+    if(typeId) type = await typesLoader.load(typeId);
     else type = null;
     return type;
 };
@@ -397,16 +306,6 @@ const transformUser = user => ({
     id: user._id,
     profilePicture: () => imageGetter(user.profilePicture)
 });
-const userLoader = new DataLoader(userId => user(userId));
-const user = async userId => {
-    try {
-        const user = await User.findById(userId);
-        return transformUser(user);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const usersLoader = new DataLoader(userIds => users(userIds));
 const users = async userIds => {
     try {
@@ -418,7 +317,7 @@ const users = async userIds => {
 };
 const userGetter = async function(userId){
     let user;
-    if(userId) user = await userLoader.load(userId);
+    if(userId) user = await usersLoader.load(userId);
     else user = null;
     return user;
 };
@@ -437,16 +336,6 @@ const transformWorkshop = workshop => ({
     createdBy: () => userGetter(workshop.createdBy),
     updatedBy: () => userGetter(workshop.updatedBy)
 });
-const workshopLoader = new DataLoader(workshopId => workshop(workshopId));
-const workshop = async workshopId => {
-    try {
-        const workshop = await Workshop.findById(workshopId);
-        return transformWorkshop(workshop);
-    } catch(err) {
-        console.log(err);
-        throw new Error(err);
-    }
-};
 const workshopsLoader = new DataLoader(workshopIds => degrees(workshopIds));
 const workshops = async workshopIds => {
     try {
@@ -459,7 +348,7 @@ const workshops = async workshopIds => {
 };
 const workshopGetter = async function(workshopId){
     let workshop;
-    if(workshopId) workshop = await workshopLoader.load(workshopId);
+    if(workshopId) workshop = await workshopsLoader.load(workshopId);
     else workshop = null;
     return workshop;
 };

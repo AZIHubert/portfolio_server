@@ -27,15 +27,15 @@ const projectSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Image'
     },
-    parts: {
+    parts: [{
         type: Schema.Types.ObjectId,
         ref: 'Part'
-    },
+    }],
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    editedBy: {
+    updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
