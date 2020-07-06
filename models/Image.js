@@ -1,9 +1,14 @@
 const { model, Schema } = require('mongoose');
 
 const imageSchema = new Schema({
-    filename: String,
-    url: String,
-    uploadAt: String,
+    filename: {
+        type: String,
+        required: true
+    },
+    url: {
+        type: String,
+        required: true
+    },
     uploadBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -20,6 +25,8 @@ const imageSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }]
+}, {
+    timestamps: true
 });
 
 module.exports = model('Image', imageSchema);

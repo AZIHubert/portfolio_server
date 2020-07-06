@@ -7,6 +7,7 @@ const projectSchema = new Schema({
         unique: true,
         uniqueCaseInsensitive: true,
         required: 'Can\'t be empty',
+        maxlength: [50, 'Need to be at most 50 characters'],
         trim: true
     },
     titleColor: {
