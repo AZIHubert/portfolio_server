@@ -1,4 +1,5 @@
 const Image = require('../../models/Image');
+const Project = require('../../models/Project');
 const cloudinary = require('cloudinary').v2;
 const { transformImage } = require('../../util/merge');
 
@@ -67,27 +68,21 @@ module.exports = {
         async deleteImage(_, {
             imageId
         }, contex){
-            checkAuth(contex);
             try{
-                if (!imageId.match(/^[0-9a-fA-F]{24}$/)) throw new Error('Invalid ObjectId');
-                const image = await Image.findById(imageId);
-                if(!image) throw new Error('Image not found');
-                const oldImageId = image._id;
-                await cloudinary.uploader.destroy(image.filename,  {
+                const { filename, projects } = await Image.findByIdAndDelete(imageId);
+                await cloudinary.uploader.destroy(filename,  {
                     type: "authenticated"
                 },(err, res) => {
                     if(err) throw new Error(err);
                 });
-                await image.delete();
-                await Project.updateMany({
-                    thumbnail: {$eq: oldImageId}
-                }, {
-                    thumbnail: null
-                });
-                return 'Image deleted successfully';
+                if(projects.length) await Project.updateMany(
+                    { _id: { $in: projects } },
+                    {  $pull: { types: imageId } }
+                );
+                return true;
             } catch(err) {
                 throw new Error(err);
             }
-        }
+        },
     }
 }

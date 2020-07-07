@@ -74,8 +74,29 @@ module.exports = {
         // async editeProject() {
 
         // },
-        // async deleteProject() {
-
-        // }
+        async deleteProject(_, { projectId }, context) {
+            try{
+                const { thumbnail, types, index } = await Project.findByIdAndDelete(projectId);
+                await Project.updateMany(
+                    { index: { $gte: index } },
+                    { $inc: { index: -1 } }
+                );
+                if(thumbnail) {
+                    await Image.findOneAndUpdate(
+                        { _id: thumbnail },
+                        { $pull: { projects: projectId } }
+                    );
+                }
+                if(types.length){
+                    await Type.updateMany(
+                        { _id: { $in: types } },
+                        {  $pull: { projects: projectId } }
+                    );
+                }
+                return true;
+            } catch(err) {
+                throw new Error(err);
+            }
+        }
     }
 }

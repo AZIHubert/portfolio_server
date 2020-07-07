@@ -1,4 +1,5 @@
 const Type = require('../../models/Type');
+const Project = require('../../models/Project');
 const { transformType } = require('../../util/merge');
 
 module.exports = {
@@ -49,5 +50,17 @@ module.exports = {
                 }
             }
         },
+        async deleteType(_, { typeId }, context) {
+            try{
+                const { projects } = await Type.findByIdAndDelete(typeId);
+                if(projects.length) await Project.updateMany(
+                    { _id: { $in: projects } },
+                    {  $pull: { types: typeId } }
+                );
+                return true;
+            } catch(err) {
+                throw new Error(err);
+            }
+        }
     }
 }

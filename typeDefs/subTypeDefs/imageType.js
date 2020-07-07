@@ -15,6 +15,6 @@ module.exports = `
     }
     type Mutation{
         uploadImage(upload: Upload!): Image!
-        deleteImage(imageId: ID): String!
+        deleteImage(imageId: ID): Boolean!
     }
 `;

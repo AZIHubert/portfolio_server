@@ -25,5 +25,6 @@ module.exports = `
     }
     type Mutation{
         createProject(title: String!, date: Int, titleColor: String, display: Boolean, types: [ID], thumbnail: ID): createProjectResponse!
+        deleteProject(projectId: ID!): Boolean!
     }
 `;

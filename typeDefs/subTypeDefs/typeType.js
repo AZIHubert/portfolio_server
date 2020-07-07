@@ -19,5 +19,6 @@ module.exports = `
     }
     type Mutation{
         createType(title: String!): createTypeResponse!
+        deleteType(typeId: ID!): Boolean!
     }
 `;
