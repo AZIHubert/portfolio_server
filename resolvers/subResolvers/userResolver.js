@@ -1,5 +1,6 @@
 const User = require('../../models/User');
 const { tryLogin } = require('../../util/auth');
+const { unrequiresAuth } = require('../../util/permissions');
 const { transformUser } = require('../../util/merge');
 
 module.exports = {
@@ -22,7 +23,7 @@ module.exports = {
         }
     },
     Mutation: {
-        createUser: async (_, { ...params }, context) => {
+        createUser: unrequiresAuth.createResolver(async (_, { ...params }, context) => {
             const errors = [];
             try {
                 const newUser = new User({...params});
@@ -49,8 +50,10 @@ module.exports = {
                     throw new Error(err);
                 }
             }
-        },
-        loginUser: async  (_, { emailOrUsername, password }, { SECRET, SECRET2 }) => tryLogin(emailOrUsername, password, SECRET, SECRET2)
+        }),
+        loginUser: unrequiresAuth.createResolver(async (_, { emailOrUsername, password }, { SECRET, SECRET2 }) => {
+            return tryLogin(emailOrUsername, password, SECRET, SECRET2);
+        })
         // async editeUser() {
 
         // },

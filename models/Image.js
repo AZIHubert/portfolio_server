@@ -9,9 +9,10 @@ const imageSchema = new Schema({
         type: String,
         required: true
     },
-    uploadBy: {
+    createdBy: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     projects: [{
         type: Schema.Types.ObjectId,

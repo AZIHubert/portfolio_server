@@ -21,7 +21,7 @@ module.exports = `
         OK: Boolean!
         token: String
         refreshToken: String
-        errors: [Error]
+        errors: [Error!]
     }
     
     type Query{

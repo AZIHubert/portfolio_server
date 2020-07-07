@@ -25,7 +25,7 @@ const createTokens = async (user, secret, secret2) => {
     return [createToken, createRefreshToken];
 }
 
-const refreshTokens = async (token, refreshToken, SECRET, SECRET2) => {
+const refreshTokens = async (refreshToken, SECRET, SECRET2) => {
     let userId = 0;
     let user = {};
     try {

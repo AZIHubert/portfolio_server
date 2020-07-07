@@ -1,5 +1,6 @@
 const Type = require('../../models/Type');
 const Project = require('../../models/Project');
+const { requiresAuth } = require('../../util/permissions');
 const { transformType } = require('../../util/merge');
 
 module.exports = {
@@ -22,15 +23,15 @@ module.exports = {
         }
     },
     Mutation: {
-        createType: async (_, { ...params }, context) => {
+        createType: requiresAuth.createResolver(async (_, { ...params }, { user: { _id }}) => {
             const errors = [];
             try {
-                const newType = new Type({...params});
+                const newType = new Type({...params, createdBy: _id });
                 const saveType = await newType.save();
                 return {
                     OK: true,
                     errors,
-                    type: transformType(newType)
+                    type: transformType(saveType)
                 };
             } catch(err) {
                 console.log(err);
@@ -49,8 +50,8 @@ module.exports = {
                     throw new Error(err);
                 }
             }
-        },
-        async deleteType(_, { typeId }, context) {
+        }),
+        deleteType: requiresAuth.createResolver(async (_, { typeId }) => {
             try{
                 const { projects } = await Type.findByIdAndDelete(typeId);
                 if(projects.length) await Project.updateMany(
@@ -59,8 +60,8 @@ module.exports = {
                 );
                 return true;
             } catch(err) {
-                throw new Error(err);
+                return false;
             }
-        }
+        })
     }
 }

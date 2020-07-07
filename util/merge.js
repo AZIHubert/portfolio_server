@@ -144,7 +144,7 @@ const employmentsGetter = async function(employmentIds){
 const transformImage = image => ({
     ...image._doc,
     _id: image._id,
-    uploadBy: () => userGetter(image.createdBy),
+    createdBy: () => userGetter(image.createdBy),
     projects: () => projectsGetter(image.projects),
     contents: () => contentsGetter(image.contents),
     user: () => userGetter(image.user)
@@ -272,8 +272,8 @@ const traineeshipsGetter = async function(traineeshipIds){
 const transformType = type => ({
     ...type._doc,
     _id: type._id,
-    createdBy: () => userGetter(traineeship.createdBy),
-    updatedBy: () => userGetter(traineeship.updatedBy),
+    createdBy: () => userGetter(type.createdBy),
+    updatedBy: () => userGetter(type.updatedBy),
     projects: () => projectsGetter(type.projects)
 });
 const typesLoader = new DataLoader(typeIds => types(typeIds));

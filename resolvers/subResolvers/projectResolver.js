@@ -1,6 +1,7 @@
 const Project = require('../../models/Project');
 const Image = require('../../models/Image');
 const Type = require('../../models/Type');
+const { requiresAuth } = require('../../util/permissions');
 const { transformProject } = require('../../util/merge');
 
 module.exports = {
@@ -23,14 +24,15 @@ module.exports = {
         }
     },
     Mutation: {
-        createProject: async (_, { types, thumbnail, ...params }, context) => {
+        createProject: requiresAuth.createResolver(async (_, { types, thumbnail, ...params }, { user: { _id }}) => {
             const errors = [];
             try {
                 const newProject = new Project({
                     types,
                     thumbnail,
                     ...params,
-                    parts: []
+                    parts: [],
+                    createdBy: _id
                 });
                 await Project.updateMany({
                     $inc: {index: 1}
@@ -70,11 +72,11 @@ module.exports = {
                     throw new Error(err);
                 }
             }
-        },
+        }),
         // async editeProject() {
 
         // },
-        async deleteProject(_, { projectId }, context) {
+        deleteProject: async (_, { projectId }) => {
             try{
                 const { thumbnail, types, index } = await Project.findByIdAndDelete(projectId);
                 await Project.updateMany(
@@ -93,9 +95,10 @@ module.exports = {
                         {  $pull: { projects: projectId } }
                     );
                 }
-                return true;
+                return true
             } catch(err) {
-                throw new Error(err);
+                console.log(err);
+                return false;
             }
         }
     }

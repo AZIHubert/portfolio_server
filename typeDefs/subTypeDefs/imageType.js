@@ -4,7 +4,7 @@ module.exports = `
         filename: String!
         url: String!
         createdAt: String!
-        uploadBy: User
+        createdBy: User
         projects: [Project!]
         users: [User!]
         contents: [Content!]

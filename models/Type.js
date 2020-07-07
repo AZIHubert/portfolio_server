@@ -17,7 +17,8 @@ const typeSchema = new Schema({
     }],
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     editedBy: {
         type: Schema.Types.ObjectId,

@@ -11,7 +11,7 @@ const addUser = async (req, res, next) => {
             req.user = user;
         } catch(err) {
             const refreshToken = req.headers['x-refresh-token'];
-            const newToken = await refreshTokens(token, refreshToken, SECRET, SECRET2);
+            const newToken = await refreshTokens(refreshToken, SECRET, SECRET2);
             if(newToken.token && newToken.refreshToken){
                 res.set('Access-Control-Expose-Headers', 'x-token', 'x-refresh-token');
                 res.set('x-token', newToken.token);
