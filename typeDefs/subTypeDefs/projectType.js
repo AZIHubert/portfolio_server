@@ -14,13 +14,40 @@ module.exports = `
         updatedAt: String
         updatedBy: User
     }
+
+    input ProjectFilter {
+        index: IntFilter
+        title: StringFilter
+        titleColor: StringFilter
+        date: IntFilter
+        display: Boolean
+        
+        and: [ProjectFilter!]
+        or: [ProjectFilter!]
+        not: ProjectFilter
+    }
+
+    enum ProjectSortableField {
+        index
+        title
+        titleColor
+        date
+        createdAt
+        updatedAt
+    }
+    input ProjectSort {
+        field: ProjectSortableField
+        order: SortOrder = ASC
+    }
+
     type createProjectResponse{
         OK: Boolean!
         project: Project
         errors: [Error!]
     }
+
     type Query{
-        getProjects: [Project!]
+        getProjects(skip: Int, limit: Int, sort: [ProjectSort!], filter: ProjectFilter): [Project!]
         getProject(projectId: ID): Project!
     }
     type Mutation{

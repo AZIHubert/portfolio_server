@@ -2,13 +2,17 @@ const Project = require('../../models/Project');
 const Image = require('../../models/Image');
 const Type = require('../../models/Type');
 const { requiresAuth } = require('../../util/permissions');
+const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformProject } = require('../../util/merge');
 
 module.exports = {
     Query: {
-        async getProjects() {
+        async getProjects(_, { sort, filter, skip, limit }) {
             try {
-                let projects = await Project.find();
+                let projects = await Project
+                    .find(normalizeFilter(filter))
+                    .sort(normalizeSorting(sort))
+                    .skip(skip).limit(limit);
                 return projects.map(project => transformProject(project));
             } catch (err) {
                 console.log(err);
@@ -34,10 +38,10 @@ module.exports = {
                     parts: [],
                     createdBy: _id
                 });
+                const savedProject = await newProject.save();
                 await Project.updateMany({
                     $inc: {index: 1}
                 });
-                const savedProject = await newProject.save();
                 if(thumbnail){
                     const image = await Image.findById(thumbnail);
                     image.projects.push(savedProject._id);
@@ -66,7 +70,7 @@ module.exports = {
                     }
                     return {
                         OK: false,
-                        errors
+                        errors: errors
                     }
                 } else {
                     throw new Error(err);
