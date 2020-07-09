@@ -56,6 +56,53 @@ module.exports = {
                 }
             }
         }),
+        updateType: requiresAuth.createResolver(async (_, { typeId, ...params }, { user: _id }) => {
+            const errors = [];
+            try {
+                let { title: oldTitle } = await Type.findById(typeId);
+                if(oldTitle === params.title) delete params.title;
+                if(!Object.keys(params).length) return {
+                    OK: false,
+                    errors: [{
+                        path: 'general',
+                        message: 'Work has not change.'
+                    }]
+                };
+                const existedTitle = await Type.findOne({ title: params.title });
+                if(existedTitle) return {
+                    OK: false,
+                    errors: [{
+                        path: 'title',
+                        message: 'Title already exist.'
+                    }]
+                };
+                const updatedType = await Type.findByIdAndUpdate(typeId,
+                    { ...params, updatedBy: _id },
+                    { new: true }
+                );
+                return {
+                    OK: true,
+                    errors,
+                    type: transformType(updatedType)
+                };
+            } catch (err) {
+                console.log(err);
+                if (err.name == 'ValidationError') {
+                    for (const [key, value] of Object.entries(err.errors)) {
+                        errors.push({
+                            path: key,
+                            message: value.properties.message
+                        });
+                    }
+                    return {
+                        OK: false,
+                        errors: errors
+                    }
+                } else {
+                    throw new Error(err);
+                }
+            }
+        }),
         deleteType: requiresAuth.createResolver(async (_, { typeId }) => {
             try{
                 const { works } = await Type.findByIdAndDelete(typeId);

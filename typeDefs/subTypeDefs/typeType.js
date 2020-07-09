@@ -29,7 +29,7 @@ module.exports = `
         order: SortOrder = ASC
     }
 
-    type createTypeResponse{
+    type typeResponse{
         OK: Boolean
         type: Type
         errors: [Error!]
@@ -39,7 +39,8 @@ module.exports = `
         getType(typeId: ID): Type!
     }
     type Mutation{
-        createType(title: String!): createTypeResponse!
+        createType(title: String!): typeResponse!
+        updateType(typeId: ID! title: String): typeResponse!
         deleteType(typeId: ID!): Boolean!
     }
 `;
