@@ -1,9 +1,9 @@
 const { model, Schema } = require('mongoose');
 
 const partSchema = new Schema({
-    project: {
+    work: {
         type: Schema.Types.ObjectId,
-        ref: 'Project'
+        ref: 'Work'
     },
     index: Number,
     justifyContent: String,

@@ -5,7 +5,7 @@ module.exports = `
         url: String!
         createdAt: String!
         createdBy: User
-        projects: [Project!]
+        works: [Work!]
         users: [User!]
         contents: [Content!]
     }

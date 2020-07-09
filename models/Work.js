@@ -1,7 +1,7 @@
 const { model, Schema } = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
-const projectSchema = new Schema({
+const workSchema = new Schema({
     title: {
         type: String,
         unique: true,
@@ -48,6 +48,6 @@ const projectSchema = new Schema({
     timestamps: true
 });
 
-projectSchema.plugin(uniqueValidator, { message: '{PATH} already exist.' });
+workSchema.plugin(uniqueValidator, { message: '{PATH} already exist.' });
 
-module.exports = model('Project', projectSchema);
+module.exports = model('Work', workSchema);

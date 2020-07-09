@@ -14,9 +14,9 @@ const imageSchema = new Schema({
         ref: 'User',
         required: true
     },
-    projects: [{
+    works: [{
         type: Schema.Types.ObjectId,
-        ref: 'Project'
+        ref: 'Work'
     }],
     contents: [{
         type: Schema.Types.ObjectId,

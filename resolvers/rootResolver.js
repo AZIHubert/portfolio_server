@@ -1,18 +1,18 @@
 const userResolver = require('./subResolvers/userResolver.js');
-const projectResolver = require('./subResolvers/projectResolver');
+const workResolver = require('./subResolvers/workResolver');
 const typeResolver = require('./subResolvers/typeResolver');
 const imageResolver = require('./subResolvers/imageResolver');
 
 module.exports = {
     Query: {
         ...userResolver.Query,
-        ...projectResolver.Query,
+        ...workResolver.Query,
         ...typeResolver.Query,
         ...imageResolver.Query
     },
     Mutation: {
         ...userResolver.Mutation,
-        ...projectResolver.Mutation,
+        ...workResolver.Mutation,
         ...typeResolver.Mutation,
         ...imageResolver.Mutation
     }

@@ -10,4 +10,8 @@ module.exports = `
         lt: Int
         lte: Int
     }
+    input ArrayStringsFilter {
+        eq: String
+        nin: String
+    }
 `;

@@ -17,8 +17,8 @@ const filterField = (value) => {
 }
 
 const normalizeFilter = filter => {
+    if(!filter) return {};
     const filtering = {};
-    if(!filter) return filtering;
     for(const [key, value] of Object.entries(filter)){
         if(key !== 'and' && key !== 'or' && key !== 'not') {
             filtering[key] = filterField(value);

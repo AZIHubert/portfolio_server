@@ -6,7 +6,7 @@ const Degree = require('../models/Degree');
 const Employment = require('../models/Employment');
 const Image = require('../models/Image');
 const Part = require('../models/Part');
-const Project = require('../models/Project');
+const Work = require('../models/Work');
 const Traineeship = require('../models/Traineeship');
 const Type = require('../models/Type');
 const User = require('../models/User');
@@ -145,7 +145,7 @@ const transformImage = image => ({
     ...image._doc,
     _id: image._id,
     createdBy: () => userGetter(image.createdBy),
-    projects: () => projectsGetter(image.projects),
+    works: () => worksGetter(image.works),
     contents: () => contentsGetter(image.contents),
     user: () => userGetter(image.user)
 });
@@ -176,7 +176,7 @@ const imagesGetter = async function(imageIds){
 const transformPart = part => ({
     ...part._doc,
     _id: part._id,
-    project: () => projectGetter(part.project),
+    work: () => workGetter(part.work),
     blocks: () => blocksGetter(part.blocks),
     createdBy: () => userGetter(part.createdBy),
     updatedBy: () => userGetter(part.updatedBy)
@@ -205,35 +205,35 @@ const partsGetter = async function(partIds){
 };
 
 // .................................................
-// Project
-const transformProject = project => ({...project._doc,
-    _id: project._id,
-    thumbnail: () => imageGetter(project.thumbnail),
-    parts: () => partsGetter(project.parts),
-    createdBy: () => userGetter(project.createdBy),
-    updatedBy: () => userGetter(project.updatedBy),
-    types: () => typesGetter(project.types)
+// Work
+const transformWork = work => ({...work._doc,
+    _id: work._id,
+    thumbnail: () => imageGetter(work.thumbnail),
+    parts: () => partsGetter(work.parts),
+    createdBy: () => userGetter(work.createdBy),
+    updatedBy: () => userGetter(work.updatedBy),
+    types: () => typesGetter(work.types)
 });
-const projectsLoader = new DataLoader(projectIds => projects(projectIds));
-const projects = async projectIds => {
+const worksLoader = new DataLoader(workIds => works(workIds));
+const works = async workIds => {
     try {
-        const projects = await Promise.all(projectIds.map(projectId => Project.findById(projectId)));
-        return projects.map(project => transformProject(project));
+        const works = await Promise.all(workIds.map(workId => Work.findById(workId)));
+        return works.map(work => transformWork(work));
     } catch(err) {
         throw new Error(err);
     }
 };
-const projectGetter = async function(projectId){
-    let project;
-    if(projectId) project = await projectsLoader.load(projectId);
-    else project = null;
-    return project;
+const workGetter = async function(WorkId){
+    let work;
+    if(workId) work = await worksLoader.load(workId);
+    else work = null;
+    return work;
 };
-const projectsGetter = async function(projectIds){
-    let projects;
-    if(!!projectIds.length) projects = await projectsLoader.loadMany(projectIds);
-    else projects = [];
-    return projects;
+const worksGetter = async function(workIds){
+    let works;
+    if(!!workIds.length) works = await worksLoader.loadMany(workIds);
+    else works = [];
+    return works;
 };
 
 // .................................................
@@ -274,7 +274,7 @@ const transformType = type => ({
     _id: type._id,
     createdBy: () => userGetter(type.createdBy),
     updatedBy: () => userGetter(type.updatedBy),
-    projects: () => projectsGetter(type.projects)
+    works: () => worksGetter(type.works)
 });
 const typesLoader = new DataLoader(typeIds => types(typeIds));
 const types = async typeIds => {
@@ -366,7 +366,7 @@ module.exports.transformDegree = transformDegree;
 module.exports.transformEmployment = transformEmployment;
 module.exports.transformImage = transformImage;
 module.exports.transformPart = transformPart;
-module.exports.transformProject = transformProject;
+module.exports.transformWork = transformWork;
 module.exports.transformTraineeship = transformTraineeship;
 module.exports.transformType = transformType;
 module.exports.transformUser = transformUser;

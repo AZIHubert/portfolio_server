@@ -32,7 +32,7 @@ const connect = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
-            useFindAndModify: true
+            useFindAndModify: false
         });
         console.log('Connected to mongo ATLAS');
         app.listen({ port }, () => console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`));

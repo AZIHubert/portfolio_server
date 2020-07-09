@@ -1,7 +1,7 @@
 module.exports = `
     type Part{
         _id: ID!
-        project: Project!
+        work: Work!
         index: Int!
         justifyContent: String!
         alignItems: String!
