@@ -1,7 +1,6 @@
 const Work = require('../../models/Work');
 const Image = require('../../models/Image');
 const Type = require('../../models/Type');
-const mongoose = require('mongoose');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformWork } = require('../../util/merge');
@@ -171,6 +170,40 @@ module.exports = {
                 } else {
                     throw new Error(err);
                 }
+            }
+        }),
+        moveWork: requiresAuth.createResolver(async (_, { workId, index}) => {
+            console.log('start moving');
+            try {
+                const works = await Work.find();
+                let work = await Work.findById(workId);
+                if(index < 0 || index > works.length - 1)
+                    throw new Error('Index out of range');
+                let oldIndex = work.index;
+                work.index = index;
+                await Work.updateMany({
+                    $and: [
+                        {_id: {$ne: workId}},
+                        {index: {$gte: oldIndex}}
+                    ]
+                }, {
+                    $inc: {index: -1}
+                });
+                await Work.updateMany({
+                    $and: [
+                        {_id: {$ne: workId}},
+                        {index: {$gte: index}}
+                    ]
+                }, {
+                    $inc: {index: 1}
+                });
+                await work.save();
+                let editedWorks = await Work.find().sort({index: 1});
+                editedWorks = editedWorks.map(work => transformWork(work));
+                return editedWorks;
+            } catch(err) {
+                console.log(err);
+                throw new Error(err);
             }
         }),
         deleteWork: requiresAuth.createResolver(async (_, { workId }) => {

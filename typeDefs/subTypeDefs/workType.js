@@ -55,6 +55,7 @@ module.exports = `
     type Mutation{
         createWork(title: String!, date: Int, titleColor: String, display: Boolean, types: [ID], thumbnail: ID): workResponse!
         updateWork(workId: ID!, title: String, date: Int, titleColor: String, display: Boolean, types: [ID!], thumbnail: ID): workResponse!
+        moveWork(workId: ID!, index: Int!): [Work!]!
         deleteWork(workId: ID!): Boolean!
     }
 `;

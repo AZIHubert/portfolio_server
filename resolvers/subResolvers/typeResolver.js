@@ -60,12 +60,13 @@ module.exports = {
             const errors = [];
             try {
                 let { title: oldTitle } = await Type.findById(typeId);
+                console.log(oldTitle, params.title);
                 if(oldTitle === params.title) delete params.title;
                 if(!Object.keys(params).length) return {
                     OK: false,
                     errors: [{
                         path: 'general',
-                        message: 'Work has not change.'
+                        message: 'Type has not change.'
                     }]
                 };
                 const existedTitle = await Type.findOne({ title: params.title });
