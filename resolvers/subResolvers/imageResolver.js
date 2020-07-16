@@ -3,6 +3,7 @@ const Work = require('../../models/Work');
 const cloudinary = require('cloudinary').v2;
 const { requiresAuth } = require('../../util/permissions');
 const { transformImage } = require('../../util/merge');
+const { formatBytes } = require('../../util/normalizers');
 
 const {
     CLOUDINARY_CLOUD_NAME,
@@ -49,7 +50,6 @@ module.exports = {
                             upload_preset: CLOUDINARY_UPLOAD_PRESET
                         }, (err, res) => {
                         if(res) {
-                            console.log(res)
                             resolve(res)
                         } else {
                             console.log(err)
@@ -61,6 +61,9 @@ module.exports = {
                 const newImage = new Image({
                     filename: file.public_id,
                     url: file.url,
+                    size: formatBytes(file.bytes),
+                    width: file.width,
+                    height: file.height,
                     createdBy: _id
                 });
                 let image = await newImage.save();

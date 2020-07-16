@@ -4,6 +4,7 @@ module.exports = `
         work: Work!
         index: Int!
         justifyContent: String!
+        backgroundColor: String!
         alignItems: String!
         disablePaddingSm: Boolean!
         paddingTop: Int!
@@ -16,18 +17,51 @@ module.exports = `
         updatedBy: User
     }
 
+    input PartFilter {
+        work: StringFilter
+        justifyContent: StringFilter
+        alignItems: StringFilter
+        disablePaddingSm: Boolean
+        paddingTop: IntFilter
+        paddingBottom: IntFilter
+        blocks: ArrayStringsFilter
+        
+        and: [PartFilter!]
+        or: [PartFilter!]
+        not: PartFilter
+    }
+
+    enum PartSortableField {
+        index
+    }
+    input PartSort {
+        field: PartSortableField
+        order: SortOrder = ASC
+    }
+
     type partResponse{
         OK: Boolean!
         part: Part
         errors: [Error!]
     }
     type Query{
-        getParts(skip: Int, limit: Int): [Part!]
+        getParts(skip: Int, limit: Int, sort: [PartSort!], filter: PartFilter): [Part!]
         getPart(partId: ID): Part!
     }
     type Mutation{
         createPart(
             workId: ID!
+            backgroundColor: String
+            justifyContent: String
+            alignItems: String
+            disablePaddingSm: Boolean
+            paddingTop: Int
+            paddingBottom: Int
+            spacing: Int
+        ): partResponse!
+        updatePart(
+            partId: ID!
+            backgroundColor: String
             justifyContent: String
             alignItems: String
             disablePaddingSm: Boolean

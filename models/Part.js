@@ -6,6 +6,10 @@ const partSchema = new Schema({
         required: true,
         ref: 'Work'
     },
+    backgroundColor: {
+        type: String,
+        default: '#1e0a14'
+    },
     index: {
         type: Number,
         default: 0
@@ -19,20 +23,20 @@ const partSchema = new Schema({
         default: 'flex-start'
     },
     disablePaddingSm: {
-        type: String,
+        type: Boolean,
         default: true
     },
     paddingTop: {
         type: Number,
         default: 0,
         min: [0, 'Minimum padding is 0'],
-        max: [10, 'Maximum padding is 10']
+        max: [5, 'Maximum padding is 5']
     },
     paddingBottom: {
         type: Number,
         default: 0,
         min: [0, 'Minimum padding is 0'],
-        max: [10, 'Maximum padding is 10']
+        max: [5, 'Maximum padding is 5']
     },
     spacing: {
         type: Number,

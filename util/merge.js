@@ -223,7 +223,7 @@ const works = async workIds => {
         throw new Error(err);
     }
 };
-const workGetter = async function(WorkId){
+const workGetter = async function(workId){
     let work;
     if(workId) work = await worksLoader.load(workId);
     else work = null;

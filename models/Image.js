@@ -9,6 +9,22 @@ const imageSchema = new Schema({
         type: String,
         required: true
     },
+    title: {
+        type: String,
+        maxlength: [25, 'Need to be at most 25 characters']
+    },
+    width: {
+        type: Number,
+        required: true
+    },
+    height: {
+        type: Number,
+        required: true
+    },
+    size: {
+        type: String,
+        required: true
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',

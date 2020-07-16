@@ -1,6 +1,7 @@
 const Work = require('../../models/Work');
 const Image = require('../../models/Image');
 const Type = require('../../models/Type');
+const Part = require('../../models/Part');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformWork } = require('../../util/merge');
@@ -208,7 +209,7 @@ module.exports = {
         }),
         deleteWork: requiresAuth.createResolver(async (_, { workId }) => {
             try{
-                const { thumbnail, types, index } = await Work.findByIdAndDelete(workId);
+                const { thumbnail, types, index, parts } = await Work.findByIdAndDelete(workId);
                 await Work.updateMany(
                     { index: { $gte: index } },
                     { $inc: { index: -1 } }
@@ -225,6 +226,7 @@ module.exports = {
                         {  $pull: { works: workId } }
                     );
                 }
+                if(parts.length) Part.deleteMany({  _id: { $in: parts } });
                 return true
             } catch(err) {
                 console.log(err);

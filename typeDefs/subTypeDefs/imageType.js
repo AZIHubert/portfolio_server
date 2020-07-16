@@ -3,6 +3,9 @@ module.exports = `
         _id: ID!
         filename: String!
         url: String!
+        width: Int!
+        height: Int!
+        size: String!
         createdAt: String!
         createdBy: User
         works: [Work!]

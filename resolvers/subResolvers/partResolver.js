@@ -6,11 +6,12 @@ const { transformPart } = require('../../util/merge');
 
 module.exports = {
     Query: {
-        async getParts(_, { skip, limit }) {
+        async getParts(_, { sort, filter, skip, limit }) {
             try {
                 let parts = await Part
-                    .skip(skip).limit(limit)
-                    .collation({ locale: "en" });
+                    .find(normalizeFilter(filter))
+                    .sort(normalizeSorting(sort))
+                    .skip(skip).limit(limit);
                 return parts.map(part => transformPart(part));
             } catch (err) {
                 console.log(err);
@@ -26,7 +27,7 @@ module.exports = {
         }
     },
     Mutation: {
-        createWork: requiresAuth.createResolver(async (_, { workId, ...params }, { user: { _id } }) => {
+        createPart: requiresAuth.createResolver(async (_, { workId, ...params }, { user: { _id } }) => {
             const errors = [];
             try {
                 const parts = await Part.find({ work: workId });
@@ -62,5 +63,128 @@ module.exports = {
                 }
             }
         }),
+        updatePart: requiresAuth.createResolver(async (_, {
+            partId, ...params
+        }, { user: { _id } }) => {
+            const errors = [];
+            try{
+                let {
+                    backgroundColor: oldBackgroundColor,
+                    justifyContent: oldJustifyContent,
+                    alignItems: oldAlignItems,
+                    disablePaddingSm: oldDisablePaddingSm,
+                    paddingTop: oldPaddingTop,
+                    paddingBottom: oldPaddingBottom,
+                    spacing: oldSpacing
+                } = await Part.findById(partId);
+
+                if(params.backgroundColor === undefined || oldBackgroundColor === params.backgroundColor)
+                    delete params.backgroundColor;
+                if(params.justifyContent === undefined || oldJustifyContent === params.justifyContent)
+                    delete params.justifyContent;
+                if(params.alignItems === undefined || oldAlignItems === params.alignItems)
+                    delete params.alignItems;
+                if(params.disablePaddingSm === undefined || oldAlignItems === params.disablePaddingSm)
+                    delete params.disablePaddingSm;
+                if(params.paddingTop === undefined || oldPaddingTop === params.paddingTop)
+                    delete params.paddingTop;
+                if(params.paddingBottom === undefined || oldPaddingBottom === params.paddingBottom)
+                    delete params.paddingBottom;
+                if(params.spacing === undefined || oldSpacing === params.spacing)
+                    delete params.spacing;
+
+                if(!Object.keys(params).length) return {
+                    OK: false,
+                    errors: [{
+                        path: 'general',
+                        message: 'Work has not change.'
+                    }]
+                };
+                console.log(params);
+                const updatedPart = await Part.findByIdAndUpdate(partId,
+                    { ...params, updatedBy: _id },
+                    { new: true }
+                );
+                return {
+                    OK: true,
+                    errors,
+                    work: transformPart(updatedPart)
+                };
+            } catch (err) {
+                console.log(err);
+                if (err.name == 'ValidationError') {
+                    for (const [key, value] of Object.entries(err.errors)) {
+                        errors.push({
+                            path: key,
+                            message: value.properties.message
+                        });
+                    }
+                    return {
+                        OK: false,
+                        errors: errors
+                    }
+                } else {
+                    throw new Error(err);
+                }
+            }
+        }),
+        movePart: requiresAuth.createResolver(async (_, { partId,  index}) => {
+            try {
+                let part = await Part.findById(partId);
+                const parts = await Part.find({
+                    work: part.work
+                });
+                if(index < 0 || index > parts.length - 1)
+                    throw new Error('Index out of range');
+                let oldIndex = part.index;
+                part.index = index;
+                await Part.updateMany({
+                    $and: [
+                        {_id: {$ne: partId}},
+                        {work: part.work},
+                        {index: {$gte: oldIndex}}
+                    ]
+                }, {
+                    $inc: {index: -1}
+                });
+                await Part.updateMany({
+                    $and: [
+                        {_id: {$ne: partId}},
+                        {work: part.work},
+                        {index: {$gte: index}}
+                    ]
+                }, {
+                    $inc: {index: 1}
+                });
+                await part.save();
+                let editedParts = await Part.find({
+                    work: part.work
+                }).sort({index: 1});
+                editedParts = editedParts.map(part => transformPart(part));
+                return editedParts;
+            } catch(err) {
+                console.log(err);
+                throw new Error(err);
+            }
+        }),
+        deletePart: requiresAuth.createResolver(async (_, { partId }) => {
+            try{
+                const { work, index } = await Part.findByIdAndDelete(partId);
+                await Part.updateMany(
+                    { index: { $gte: index } },
+                    { $inc: { index: -1 } }
+                );
+                if(work) {
+                    await Work.findOneAndUpdate(
+                        { _id: work },
+                        { $pull: { parts: partId } }
+                    );
+                }
+                return true;
+            } catch(err) {
+                console.log(err);
+                return false;
+            }
+        })
     }
 }

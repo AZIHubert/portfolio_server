@@ -37,5 +37,15 @@ const normalizeFilter = filter => {
     return filtering;
 }
 
+const formatBytes = (a,b=2) => { 
+    if(0 === a) return"0 Bytes";
+    const c = 0 > b ? 0 : b;
+    const d = Math.floor(Math.log(a)/Math.log(1024));
+    const e = ["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"];
+    return `${parseFloat((a/Math.pow(1024,d)).toFixed(c))} ${e[d]}`;
+}
+
+
 module.exports.normalizeSorting = normalizeSorting;
 module.exports.normalizeFilter = normalizeFilter;
+module.exports.formatBytes = formatBytes;
