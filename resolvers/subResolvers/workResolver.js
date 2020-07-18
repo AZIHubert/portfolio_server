@@ -2,6 +2,8 @@ const Work = require('../../models/Work');
 const Image = require('../../models/Image');
 const Type = require('../../models/Type');
 const Part = require('../../models/Part');
+const Block = require('../../models/Block');
+const Content = require('../../models/Content');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformWork } = require('../../util/merge');
@@ -226,7 +228,19 @@ module.exports = {
                         {  $pull: { works: workId } }
                     );
                 }
-                if(parts.length) Part.deleteMany({  _id: { $in: parts } });
+                if(parts.length) {
+                    const blocks = Part.find({  _id: { $in: parts } })
+                        .map(part => part.blocks)
+                        .reduce((prev, curr) => prev.concat(curr));
+                    Part.deleteMany({  _id: { $in: parts } });
+                    if(blocks.length) {
+                        const contents = Block.find({  _id: { $in: blocks } })
+                            .map(block => block.contents)
+                            .reduce((prev, curr) => prev.concat(curr));
+                        Block.deleteMany({  _id: { $in: blocks } });
+                        if(contents.length) Content.deleteMany({ _id: { $in: contents }});
+                    }
+                }
                 return true
             } catch(err) {
                 console.log(err);

@@ -1,5 +1,7 @@
 const Part = require('../../models/Part');
 const Work = require('../../models/Work');
+const Block = require('../../models/Block');
+const Content = require('../../models/Content');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformPart } = require('../../util/merge');
@@ -97,7 +99,7 @@ module.exports = {
                     OK: false,
                     errors: [{
                         path: 'general',
-                        message: 'Work has not change.'
+                        message: 'Part has not change.'
                     }]
                 };
                 console.log(params);
@@ -169,7 +171,7 @@ module.exports = {
         }),
         deletePart: requiresAuth.createResolver(async (_, { partId }) => {
             try{
-                const { work, index } = await Part.findByIdAndDelete(partId);
+                const { work, index, blocks } = await Part.findByIdAndDelete(partId);
                 await Part.updateMany(
                     { index: { $gte: index } },
                     { $inc: { index: -1 } }
@@ -179,6 +181,13 @@ module.exports = {
                         { _id: work },
                         { $pull: { parts: partId } }
                     );
+                }
+                if(blocks.length) {
+                    const contents = Block.find({  _id: { $in: blocks } })
+                        .map(block => block.contents)
+                        .reduce((prev, curr) => prev.concat(curr));
+                    Block.deleteMany({  _id: { $in: blocks } });
+                    if(contents.length) Content.deleteMany({ _id: { $in: contents }});
                 }
                 return true;
             } catch(err) {
