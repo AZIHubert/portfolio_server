@@ -60,7 +60,6 @@ module.exports = {
             const errors = [];
             try {
                 let { title: oldTitle } = await Type.findById(typeId);
-                console.log(oldTitle, params.title);
                 if(oldTitle === params.title) delete params.title;
                 if(!Object.keys(params).length) return {
                     OK: false,

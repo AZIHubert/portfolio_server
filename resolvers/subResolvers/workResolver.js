@@ -176,7 +176,6 @@ module.exports = {
             }
         }),
         moveWork: requiresAuth.createResolver(async (_, { workId, index}) => {
-            console.log('start moving');
             try {
                 const works = await Work.find();
                 let work = await Work.findById(workId);
@@ -229,16 +228,14 @@ module.exports = {
                     );
                 }
                 if(parts.length) {
-                    const blocks = Part.find({  _id: { $in: parts } })
-                        .map(part => part.blocks)
-                        .reduce((prev, curr) => prev.concat(curr));
-                    Part.deleteMany({  _id: { $in: parts } });
+                    let blocks = await Part.find({  _id: { $in: parts } });
+                    blocks = blocks.map(part => part.blocks).reduce((prev, curr) => prev.concat(curr));
+                    await Part.deleteMany({  _id: { $in: parts } });
                     if(blocks.length) {
-                        const contents = Block.find({  _id: { $in: blocks } })
-                            .map(block => block.contents)
-                            .reduce((prev, curr) => prev.concat(curr));
-                        Block.deleteMany({  _id: { $in: blocks } });
-                        if(contents.length) Content.deleteMany({ _id: { $in: contents }});
+                        let contents = await Block.find({  _id: { $in: blocks } })
+                        constents = contents.map(block => block.contents).reduce((prev, curr) => prev.concat(curr));
+                        await Block.deleteMany({  _id: { $in: blocks } });
+                        if(contents.length) await Content.deleteMany({ _id: { $in: contents }});
                     }
                 }
                 return true

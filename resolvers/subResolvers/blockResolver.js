@@ -6,7 +6,7 @@ const { transformBlock } = require('../../util/merge');
 
 module.exports = {
     Query: {
-        async getBlock(_, { sort, filter, skip, limit }) {
+        async getBlocks(_, { sort, filter, skip, limit }) {
             try {
                 let blocks = await Block
                     .find(normalizeFilter(filter))
@@ -31,6 +31,8 @@ module.exports = {
             const errors = [];
             try {
                 const blocks = await Block.find({ part: partId });
+                const blockSize = blocks.map(block => block.size).reduce((prev, curr) => prev + curr, 0);
+                if(blockSize > 3) throw new Error('size out of range');
                 const newBlock = new Block({
                     part: partId,
                     ...params,
@@ -43,7 +45,7 @@ module.exports = {
                 return {
                     OK: true,
                     errors,
-                    part: transformBlock(savedBlock)
+                    block: transformBlock(savedBlock)
                 };
             } catch(err) {
                 console.log(err);
@@ -63,7 +65,7 @@ module.exports = {
                 }
             }
         }),
-        updatePart: requiresAuth.createResolver(async (_, {
+        updateBlock: requiresAuth.createResolver(async (_, {
             blockId, ...params
         }, { user: { _id } }) => {
             const errors = [];
@@ -109,8 +111,8 @@ module.exports = {
                 }
             }
         }),
-        movePart: requiresAuth.createResolver(async (_, { partId,  index}) => {}),
-        deletePart: requiresAuth.createResolver(async (_, { blockId }) => {
+        moveBlock: requiresAuth.createResolver(async (_, { partId,  index}) => {}),
+        deleteBlock: requiresAuth.createResolver(async (_, { blockId }) => {
             try{
                 const { part, index } = await Block.findByIdAndDelete(blockId);
                 await Block.updateMany(

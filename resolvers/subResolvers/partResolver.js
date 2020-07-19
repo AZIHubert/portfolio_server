@@ -86,7 +86,7 @@ module.exports = {
                     delete params.justifyContent;
                 if(params.alignItems === undefined || oldAlignItems === params.alignItems)
                     delete params.alignItems;
-                if(params.disablePaddingSm === undefined || oldAlignItems === params.disablePaddingSm)
+                if(params.disablePaddingSm === undefined || oldDisablePaddingSm === params.disablePaddingSm)
                     delete params.disablePaddingSm;
                 if(params.paddingTop === undefined || oldPaddingTop === params.paddingTop)
                     delete params.paddingTop;
@@ -102,7 +102,6 @@ module.exports = {
                         message: 'Part has not change.'
                     }]
                 };
-                console.log(params);
                 const updatedPart = await Part.findByIdAndUpdate(partId,
                     { ...params, updatedBy: _id },
                     { new: true }
@@ -183,11 +182,10 @@ module.exports = {
                     );
                 }
                 if(blocks.length) {
-                    const contents = Block.find({  _id: { $in: blocks } })
-                        .map(block => block.contents)
-                        .reduce((prev, curr) => prev.concat(curr));
-                    Block.deleteMany({  _id: { $in: blocks } });
-                    if(contents.length) Content.deleteMany({ _id: { $in: contents }});
+                    let contents = await Block.find({  _id: { $in: blocks } });
+                    contents = contents.map(block => block.contents).reduce((prev, curr) => prev.concat(curr));
+                    await Block.deleteMany({  _id: { $in: blocks } });
+                    if(contents.length) await Content.deleteMany({ _id: { $in: contents }});
                 }
                 return true;
             } catch(err) {

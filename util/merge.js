@@ -18,7 +18,7 @@ const transformBlock = block => ({
     ...block._doc,
     _id: block._id,
     part: () => partGetter(block.part),
-    contents: () => contentsGetter(block.content),
+    contents: () => contentsGetter(block.contents),
     createdBy: () => userGetter(block.createdBy),
     updatedBy: () => userGetter(block.updatedBy)
 });
