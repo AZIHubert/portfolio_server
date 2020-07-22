@@ -4,6 +4,7 @@ const typeResolver = require('./subResolvers/typeResolver');
 const imageResolver = require('./subResolvers/imageResolver');
 const partResolver = require('./subResolvers/partResolver');
 const blockResolver = require('./subResolvers/blockResolver');
+const contentResolver = require('./subResolvers/contentResolver');
 
 module.exports = {
     Query: {
@@ -12,7 +13,8 @@ module.exports = {
         ...typeResolver.Query,
         ...imageResolver.Query,
         ...partResolver.Query,
-        ...blockResolver.Query
+        ...blockResolver.Query,
+        ...contentResolver.Query
     },
     Mutation: {
         ...userResolver.Mutation,
@@ -20,6 +22,7 @@ module.exports = {
         ...typeResolver.Mutation,
         ...imageResolver.Mutation,
         ...partResolver.Mutation,
-        ...blockResolver.Mutation
+        ...blockResolver.Mutation,
+        ...contentResolver.Mutation
     }
 }

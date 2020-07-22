@@ -5,9 +5,18 @@ const contentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Block'
     },
-    index: Number,
-    paddingTop: Number,
-    type: String,
+    index: {
+        type: Number,
+        required: true
+    },
+    paddingTop: {
+        type: Number,
+        required: true
+    },
+    type: {
+        type: String,
+        required: true
+    },
     image: {
         type: Schema.Types.ObjectId,
         ref: 'Image'
@@ -16,16 +25,16 @@ const contentSchema = new Schema({
     variant: String,
     textAlign: String,
     body: String,
-    createdAt: String,
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    editedAt: String,
-    editedBy: {
+    updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 module.exports = model('Content', contentSchema);

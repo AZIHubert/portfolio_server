@@ -1,5 +1,6 @@
 const Block = require('../../models/Block');
 const Part = require('../../models/Part');
+const Content = require('../../models/Content');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformBlock } = require('../../util/merge');
@@ -72,7 +73,7 @@ module.exports = {
             try{
                 let {
                     size: oldSize,
-                } = await Part.findById(partId);
+                } = await Block.findById(blockId);
 
                 if(params.size === undefined || oldSize === params.size)
                     delete params.size;
@@ -91,7 +92,7 @@ module.exports = {
                 return {
                     OK: true,
                     errors,
-                    work: transformBlock(updatedBlock)
+                    block: transformBlock(updatedBlock)
                 };
             } catch (err) {
                 console.log(err);
@@ -111,19 +112,69 @@ module.exports = {
                 }
             }
         }),
-        moveBlock: requiresAuth.createResolver(async (_, { partId,  index}) => {}),
+        moveBlock: requiresAuth.createResolver(async (_, { blockId,  index}) => {
+            try {
+                let block = await Block.findById(blockId);
+                const blocks = await Block.find({
+                    part: block.part
+                });
+                if(index < 0 || index > blocks.length - 1)
+                    throw new Error('Index out of range');
+                let oldIndex = block.index;
+                block.index = index;
+                await Block.updateMany({
+                    $and: [
+                        {_id: {$ne: blockId}},
+                        {part: block.part},
+                        {index: {$gte: oldIndex}}
+                    ]
+                }, {
+                    $inc: {index: -1}
+                });
+                await Block.updateMany({
+                    $and: [
+                        {_id: {$ne: blockId}},
+                        {part: block.part},
+                        {index: {$gte: index}}
+                    ]
+                }, {
+                    $inc: {index: 1}
+                });
+                await block.save();
+                let editedBlocks = await Block.find({
+                    part: block.part
+                }).sort({index: 1});
+                editedBlocks = editedBlocks.map(block => transformBlock(block));
+                return editedBlocks;
+            } catch(err) {
+                console.log(err);
+                throw new Error(err);
+            }
+        }),
         deleteBlock: requiresAuth.createResolver(async (_, { blockId }) => {
             try{
-                const { part, index } = await Block.findByIdAndDelete(blockId);
+                const { part, index, contents: contentsId } = await Block.findByIdAndDelete(blockId);
                 await Block.updateMany(
-                    { index: { $gte: index } },
+                    { $and: [
+                        { index: { $gte: index } },
+                        { part: { $eq: part } }
+                    ] },
                     { $inc: { index: -1 } }
                 );
-                if(part) {
-                    await Part.findOneAndUpdate(
-                        { _id: part },
-                        { $pull: { blocks: blockId } }
-                    );
+                if(part) await Part.findOneAndUpdate(
+                    { _id: part },
+                    { $pull: { blocks: blockId } }
+                );
+                if(contentsId.length) {
+                    const contents = await Content.find({  _id: { $in: contentsId } });
+                        const imagesId = contents.filter(content => !!content.image).map(content => content.image);
+                        await Content.deleteMany({ _id: { $in: contentsId }});
+                        if(imagesId.length){
+                            await Image.updateMany(
+                                { _id: { $in: imagesId } },
+                                { $pull: { contents: { $in: contentsId } } }
+                            );
+                        }
                 }
                 return true;
             } catch(err) {

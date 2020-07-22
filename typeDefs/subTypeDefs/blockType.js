@@ -40,7 +40,7 @@ module.exports = `
     type Mutation{
         createBlock(partId: ID! size: Int!): blockResponse!
         updateBlock(blockId: ID! size: Int!): blockResponse!
-        moveBlock(partId: ID! blockId: ID! index: Int!): [Block!]!
+        moveBlock(blockId: ID! index: Int!): [Block!]!
         deleteBlock(blockId: ID!): Boolean!
     }
 `;

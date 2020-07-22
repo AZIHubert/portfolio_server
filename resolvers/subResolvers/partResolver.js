@@ -109,7 +109,7 @@ module.exports = {
                 return {
                     OK: true,
                     errors,
-                    work: transformPart(updatedPart)
+                    part: transformPart(updatedPart)
                 };
             } catch (err) {
                 console.log(err);
@@ -170,9 +170,12 @@ module.exports = {
         }),
         deletePart: requiresAuth.createResolver(async (_, { partId }) => {
             try{
-                const { work, index, blocks } = await Part.findByIdAndDelete(partId);
+                const { work, index, blocks: blocksId } = await Part.findByIdAndDelete(partId);
                 await Part.updateMany(
-                    { index: { $gte: index } },
+                    { $and: [
+                        { index: { $gte: index } },
+                        { work: { $eq: work } }
+                    ] },
                     { $inc: { index: -1 } }
                 );
                 if(work) {
@@ -181,11 +184,21 @@ module.exports = {
                         { $pull: { parts: partId } }
                     );
                 }
-                if(blocks.length) {
-                    let contents = await Block.find({  _id: { $in: blocks } });
-                    contents = contents.map(block => block.contents).reduce((prev, curr) => prev.concat(curr));
+                if(blocksId.length) {
+                    let Blocks = await Block.find({  _id: { $in: blocksId } });
+                    const contentsId = Blocks.map(block => block.contents).reduce((prev, curr) => prev.concat(curr));
                     await Block.deleteMany({  _id: { $in: blocks } });
-                    if(contents.length) await Content.deleteMany({ _id: { $in: contents }});
+                    if(contentsId.length) {
+                        const contents = await Content.find({  _id: { $in: contentsId } });
+                        const imagesId = contents.filter(content => !!content.image).map(content => content.image);
+                        await Content.deleteMany({ _id: { $in: contentsId }});
+                        if(imagesId.length){
+                            await Image.updateMany(
+                                { _id: { $in: imagesId } },
+                                { $pull: { contents: { $in: contentsId } } }
+                            );
+                        }
+                    }
                 }
                 return true;
             } catch(err) {
