@@ -72,6 +72,7 @@ module.exports = {
             try{
                 let {
                     backgroundColor: oldBackgroundColor,
+                    disableBackground: oldDisableBackground,
                     justifyContent: oldJustifyContent,
                     alignItems: oldAlignItems,
                     disablePaddingSm: oldDisablePaddingSm,
@@ -82,6 +83,8 @@ module.exports = {
 
                 if(params.backgroundColor === undefined || oldBackgroundColor === params.backgroundColor)
                     delete params.backgroundColor;
+                if(params.disableBackground === undefined || oldDisableBackground === params.disableBackground)
+                    delete params.disableBackground;
                 if(params.justifyContent === undefined || oldJustifyContent === params.justifyContent)
                     delete params.justifyContent;
                 if(params.alignItems === undefined || oldAlignItems === params.alignItems)

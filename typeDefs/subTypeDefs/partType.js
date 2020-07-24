@@ -5,6 +5,7 @@ module.exports = `
         index: Int!
         justifyContent: String!
         backgroundColor: String!
+        disableBackground: Boolean!
         alignItems: String!
         disablePaddingSm: Boolean!
         paddingTop: Int!
@@ -53,6 +54,7 @@ module.exports = `
             workId: ID!
             backgroundColor: String
             justifyContent: String
+            disableBackground: Boolean!
             alignItems: String
             disablePaddingSm: Boolean
             paddingTop: Int
@@ -63,6 +65,7 @@ module.exports = `
             partId: ID!
             backgroundColor: String
             justifyContent: String
+            disableBackground: Boolean
             alignItems: String
             disablePaddingSm: Boolean
             paddingTop: Int

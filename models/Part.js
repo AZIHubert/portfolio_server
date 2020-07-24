@@ -6,6 +6,11 @@ const partSchema = new Schema({
         required: true,
         ref: 'Work'
     },
+    disableBackground: {
+        type: Boolean,
+        default: true,
+        required: true
+    },
     backgroundColor: {
         type: String,
         default: '#1e0a14'
@@ -30,19 +35,19 @@ const partSchema = new Schema({
         type: Number,
         default: 0,
         min: [0, 'Minimum padding is 0'],
-        max: [5, 'Maximum padding is 5']
+        max: [20, 'Maximum padding is 200px']
     },
     paddingBottom: {
         type: Number,
         default: 0,
-        min: [0, 'Minimum padding is 0'],
-        max: [5, 'Maximum padding is 5']
+        min: [0, 'Minimum padding is 0px'],
+        max: [20, 'Maximum padding is 200px']
     },
     spacing: {
         type: Number,
         default: 0,
-        min: [1, 'Minimum spacing is 1'],
-        max: [5, 'Maximum padding is 5']
+        min: [0, 'Minimum spacing is 0px'],
+        max: [5, 'Maximum padding is 50px']
     },
     blocks: [{
         type: Schema.Types.ObjectId,

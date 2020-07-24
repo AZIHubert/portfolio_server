@@ -6,7 +6,12 @@ const blockSchema = new Schema({
         ref: 'Part'
     },
     index: Number,
-    size: Number,
+    size: {
+        type: Number,
+        default: 0,
+        min: [1, 'Minimum size is 1'],
+        max: [4, 'Maximum size is 4']
+    },
     contents: [{
         type: Schema.Types.ObjectId,
         ref: 'Content'
