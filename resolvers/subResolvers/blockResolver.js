@@ -33,7 +33,7 @@ module.exports = {
             try {
                 const blocks = await Block.find({ part: partId });
                 const blockSize = blocks.map(block => block.size).reduce((prev, curr) => prev + curr, 0);
-                if(blockSize > 3) throw new Error('size out of range');
+                if(blockSize > 4) throw new Error('size out of range');
                 const newBlock = new Block({
                     part: partId,
                     ...params,
