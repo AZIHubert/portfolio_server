@@ -82,8 +82,8 @@ const contentsGetter = async function(contentIds){
 const transformDegree = degree => ({
     ...degree._doc,
     _id: degree._id,
-    createdBy: () => userGetter(block.createdBy),
-    updatedBy: () => userGetter(block.updatedBy)
+    createdBy: () => userGetter(degree.createdBy),
+    updatedBy: () => userGetter(degree.updatedBy)
 });
 const degreesLoader = new DataLoader(degreeIds => degrees(degreeIds));
 const degrees = async degreeIds => {

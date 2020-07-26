@@ -1,4 +1,3 @@
-// const { gql } = require('apollo-server-express');
 const path = require('path');
 const { loadFilesSync } = require('@graphql-tools/load-files');
 const { mergeTypeDefs } = require('@graphql-tools/merge');

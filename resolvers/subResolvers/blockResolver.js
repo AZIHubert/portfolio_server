@@ -1,6 +1,7 @@
 const Block = require('../../models/Block');
 const Part = require('../../models/Part');
 const Content = require('../../models/Content');
+const Image = require('../../models/Image');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformBlock } = require('../../util/merge');
@@ -167,14 +168,14 @@ module.exports = {
                 );
                 if(contentsId.length) {
                     const contents = await Content.find({  _id: { $in: contentsId } });
-                        const imagesId = contents.filter(content => !!content.image).map(content => content.image);
-                        await Content.deleteMany({ _id: { $in: contentsId }});
-                        if(imagesId.length){
-                            await Image.updateMany(
-                                { _id: { $in: imagesId } },
-                                { $pull: { contents: { $in: contentsId } } }
-                            );
-                        }
+                    const imagesId = contents.filter(content => !!content.image).map(content => content.image);
+                    await Content.deleteMany({ _id: { $in: contentsId }});
+                    if(imagesId.length){
+                        await Image.updateMany(
+                            { _id: { $in: imagesId } },
+                            { $pull: { contents: { $in: contentsId } } }
+                        );
+                    }
                 }
                 return true;
             } catch(err) {

@@ -5,6 +5,11 @@ const imageResolver = require('./subResolvers/imageResolver');
 const partResolver = require('./subResolvers/partResolver');
 const blockResolver = require('./subResolvers/blockResolver');
 const contentResolver = require('./subResolvers/contentResolver');
+const degreeResolver = require('./subResolvers/degreeResolver');
+const traineeshipResolver = require('./subResolvers/traineeshipResolver');
+const workshopResolver = require('./subResolvers/workshopResolver');
+const employmentResolver = require('./subResolvers/employmentResolver');
+const generalResolver = require('./subResolvers/generalResolver');
 
 module.exports = {
     Query: {
@@ -14,7 +19,12 @@ module.exports = {
         ...imageResolver.Query,
         ...partResolver.Query,
         ...blockResolver.Query,
-        ...contentResolver.Query
+        ...contentResolver.Query,
+        ...degreeResolver.Query,
+        ...traineeshipResolver.Query,
+        ...workshopResolver.Query,
+        ...employmentResolver.Query,
+        ...generalResolver.Query
     },
     Mutation: {
         ...userResolver.Mutation,
@@ -23,6 +33,11 @@ module.exports = {
         ...imageResolver.Mutation,
         ...partResolver.Mutation,
         ...blockResolver.Mutation,
-        ...contentResolver.Mutation
+        ...contentResolver.Mutation,
+        ...degreeResolver.Mutation,
+        ...traineeshipResolver.Mutation,
+        ...workshopResolver.Mutation,
+        ...employmentResolver.Mutation,
+        ...generalResolver.Mutation
     }
-}
+};

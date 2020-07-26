@@ -2,6 +2,7 @@ const Part = require('../../models/Part');
 const Work = require('../../models/Work');
 const Block = require('../../models/Block');
 const Content = require('../../models/Content');
+const Image = require('../../models/Image');
 const { requiresAuth } = require('../../util/permissions');
 const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 const { transformPart } = require('../../util/merge');
@@ -188,8 +189,8 @@ module.exports = {
                     );
                 }
                 if(blocksId.length) {
-                    let Blocks = await Block.find({  _id: { $in: blocksId } });
-                    const contentsId = Blocks.map(block => block.contents).reduce((prev, curr) => prev.concat(curr));
+                    const blocks = await Block.find({  _id: { $in: blocksId } });
+                    const contentsId = blocks.map(block => block.contents).reduce((prev, curr) => prev.concat(curr));
                     await Block.deleteMany({  _id: { $in: blocks } });
                     if(contentsId.length) {
                         const contents = await Content.find({  _id: { $in: contentsId } });

@@ -2,10 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { ApolloServer } = require('apollo-server-express');
 
-const { SECRET, SECRET2 } = require('./config');
+const { MONGODB, SECRET, SECRET2 } = require('./config');
 
 const port = 8000;
-const { MONGODB } = require('./config.js');
 
 const typeDefs = require('./typeDefs/rootTypeDef.js');
 const resolvers = require('./resolvers/rootResolver.js');

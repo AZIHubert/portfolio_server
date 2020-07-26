@@ -13,7 +13,6 @@ const createResolver = resolver => {
 };
 
 const unrequiresAuth = createResolver((parent, args, context) => {
-    
     if(context.user){
         throw new Error('Already authenticated');
     }

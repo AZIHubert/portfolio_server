@@ -2,21 +2,39 @@ const { model, Schema } = require('mongoose');
 
 const employmentSchema = new Schema({
     body: String,
-    city: String,
-    company: String,
-    companyLink: String,
-    yearFrom: Number,
+    city: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    company: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    companyLink: {
+        type: String,
+        trim: true
+    },
+    yearFrom: {
+        type: Number,
+        required: true
+    },
     yearTo: Number,
-    currentWork: Boolean,
+    currentWork: {
+        type: Boolean,
+        required: true
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    editedAt: String,
-    editedBy: {
+    updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 module.exports = model('Employment', employmentSchema);
