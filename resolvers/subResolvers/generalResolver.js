@@ -1,5 +1,6 @@
 const General = require('../../models/General');
 const { requiresAuth } = require('../../util/permissions');
+const { transformGeneral } = require('../../util/merge');
 
 module.exports = {
     Query: {
@@ -10,14 +11,14 @@ module.exports = {
                     const newGeneral = new General();
                     general = await newGeneral.save();
                 }
-                return general
+                return transformGeneral(general);
             } catch(err) {
                 throw new Error(err);
             }
         }
     },
     Mutation: {
-        editGeneral: requiresAuth.createResolver(async (_, { ...params }) => {
+        editGeneral: requiresAuth.createResolver(async (_, { ...params }, { user: _id }) => {
             const errors = [];
             try {
                 const existedGeneral = await General.findOne();
@@ -52,7 +53,6 @@ module.exports = {
                         delete params.adressZip;
                     if(params.adressCountry === undefined || oldAdressCountry === params.adressCountry.trim())
                         delete params.adressCountry;
-                    const updatedGeneral = { ...existedGeneral, ...params };
                     if(!Object.keys(params).length) return {
                         OK: false,
                         errors: [{
@@ -60,15 +60,18 @@ module.exports = {
                             message: 'General has not change.'
                         }]
                     };
-                    general = await updatedGeneral.save();
+                    general = await General.findByIdAndUpdate(existedGeneral._id,
+                        { ...params, updatedBy: _id },
+                        { new: true }
+                    );
                 } else {
-                    const newGeneral = new General({ ...params });
+                    const newGeneral = new General({ ...params, updatedBy: _id });
                     general = await newGeneral.save();
                 }
                 return {
                     OK: true,
                     errors,
-                    general
+                    general: transformGeneral(general)
                 }
             } catch(err) {
                 console.log(err);

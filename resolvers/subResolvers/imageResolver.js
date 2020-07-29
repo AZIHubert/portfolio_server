@@ -1,9 +1,11 @@
 const Image = require('../../models/Image');
 const Work = require('../../models/Work');
+const Content = require('../../models/Content');
 const cloudinary = require('cloudinary').v2;
 const { requiresAuth } = require('../../util/permissions');
 const { transformImage } = require('../../util/merge');
 const { formatBytes } = require('../../util/normalizers');
+const { normalizeSorting } = require('../../util/normalizers');
 
 const {
     CLOUDINARY_CLOUD_NAME,
@@ -20,9 +22,12 @@ cloudinary.config({
 
 module.exports = {
     Query: {
-        async getImages(){
+        async getImages(_, { sort, skip, limit }){
             try{
-                const images = await Image.find();
+                const images = await Image.find()
+                    .sort(normalizeSorting(sort))
+                    .skip(skip).limit(limit)
+                    .collation({ locale: "en" });
                 return images.map(image => transformImage(image));
             } catch(err) {
                 throw new Error(err);
@@ -41,6 +46,7 @@ module.exports = {
     },
     Mutation: {
         uploadImage: requiresAuth.createResolver(async (_, { upload }, { user: { _id }}) => {
+            const errors = [];
             try {
                 const { createReadStream } = await upload;
                 const fileStream = createReadStream();
@@ -60,21 +66,77 @@ module.exports = {
                 });
                 const newImage = new Image({
                     filename: file.public_id,
-                    url: file.url,
+                    url: file.secure_url,
                     size: formatBytes(file.bytes),
                     width: file.width,
                     height: file.height,
                     createdBy: _id
                 });
                 let image = await newImage.save();
-                return transformImage(image);
+                return {
+                    OK: true,
+                    errors,
+                    image: transformImage(image)
+                };
             } catch(err) {
                 throw new Error(err);
             }
         }),
+        updateImage : requiresAuth.createResolver(async (_, { imageId, ...params }) =>{
+            const errors = [];
+            try{
+                let {
+                    title: oldTitle
+                } = await Image.findById(imageId);
+                
+                if(params.title === undefined || oldTitle === params.title.trim())
+                    delete params.title;
+                        
+                if(!Object.keys(params).length) return {
+                    OK: false,
+                    errors: [{
+                        path: 'general',
+                        message: 'Image has not change.'
+                    }]
+                };
+                const existedImage = await Image.findOne({title: params.title });
+                if(existedImage) return {
+                    OK: false,
+                    errors: [{
+                        path: 'title',
+                        message: 'title is already taken.'
+                    }]
+                };
+                const updatedImage = await Image.findByIdAndUpdate(imageId,
+                    { ...params },
+                    { new: true }
+                );
+                return {
+                    OK: true,
+                    errors,
+                    image: transformImage(updatedImage)
+                };
+            } catch(err) {
+                console.log(err);
+                if (err.name == 'ValidationError') {
+                    for (const [key, value] of Object.entries(err.errors)) {
+                        errors.push({
+                            path: key,
+                            message: value.properties.message
+                        });
+                    }
+                    return {
+                        OK: false,
+                        errors: errors
+                    }
+                } else {
+                    throw new Error(err);
+                }
+            }
+        }),
         deleteImage: requiresAuth.createResolver(async (_, { imageId }) =>{
             try{
-                const { filename, works } = await Image.findByIdAndDelete(imageId);
+                const { filename, works, contents } = await Image.findByIdAndDelete(imageId);
                 await cloudinary.uploader.destroy(filename,(err, res) => {
                     if(res) console.log(res);
                     if(err) throw new Error(err);
@@ -82,6 +144,10 @@ module.exports = {
                 if(works.length) await Work.updateMany(
                     { _id: { $in: works } },
                     {  $set: { thumbnail: null } }
+                );
+                if(contents.length) await Content.updateMany(
+                    { _id: { $in: contents } },
+                    { $set: { image: null } }
                 );
                 return true;
             } catch(err) {

@@ -11,13 +11,34 @@ module.exports = `
         works: [Work!]
         users: [User!]
         contents: [Content!]
+        title: String
     }
+
+    enum ImageSortableField {
+        title
+        createdAt
+        filename
+        width
+        height
+    }
+    input ImageSort {
+        field: ImageSortableField
+        order: SortOrder = ASC
+    }
+
+    type imageResponse{
+        OK: Boolean!
+        image: Image
+        errors: [Error!]
+    }
+
     type Query{
-        getImages: [Image]!
+        getImages(skip: Int, limit: Int, sort: [ImageSort!]): [Image]!
         getImage(imageId: ID!): Image!
     }
     type Mutation{
-        uploadImage(upload: Upload!): Image!
+        uploadImage(upload: Upload!): imageResponse!
+        updateImage(imageId: ID! title: String): imageResponse!
         deleteImage(imageId: ID): Boolean!
     }
 `;

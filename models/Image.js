@@ -11,7 +11,8 @@ const imageSchema = new Schema({
     },
     title: {
         type: String,
-        maxlength: [25, 'Need to be at most 25 characters']
+        default: '',
+        maxlength: [100, 'Need to be at most 100 characters']
     },
     width: {
         type: Number,

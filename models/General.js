@@ -2,7 +2,8 @@ const { model, Schema } = require('mongoose');
 
 const validateEmail = email => {
     const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
+    if(email.trim() === '') return true;
+    return re.test(email);
 };
 
 const generalSchema = new Schema({
@@ -31,7 +32,7 @@ const generalSchema = new Schema({
         type: String,
         default: ''
     },
-    adressStreat: {
+    adressStreet: {
         type: String,
         default: ''
     },
@@ -42,7 +43,13 @@ const generalSchema = new Schema({
     adressCountry: {
         type: String,
         default: ''
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 module.exports = model('General', generalSchema);

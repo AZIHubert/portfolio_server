@@ -140,6 +140,14 @@ const employmentsGetter = async function(employmentIds){
 };
 
 // .................................................
+// Employment
+const transformGeneral = general => ({
+    ...general._doc,
+    _id: general._id,
+    updatedBy: () => userGetter(general.updatedBy)
+});
+
+// .................................................
 // Image
 const transformImage = image => ({
     ...image._doc,
@@ -364,6 +372,7 @@ module.exports.transformBlock = transformBlock;
 module.exports.transformContent = transformContent;
 module.exports.transformDegree = transformDegree;
 module.exports.transformEmployment = transformEmployment;
+module.exports.transformGeneral = transformGeneral;
 module.exports.transformImage = transformImage;
 module.exports.transformPart = transformPart;
 module.exports.transformWork = transformWork;

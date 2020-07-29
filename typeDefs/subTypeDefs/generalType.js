@@ -5,10 +5,12 @@ module.exports = `
         phone: String
         facebook: String
         instagram: String
-        linkeding: String
+        linkedin: String
         adressStreet: String
         adressZip: String
         adressCountry: String
+        updatedAt: String
+        updatedBy: User
     }
 
     type generalResponse{
@@ -22,12 +24,12 @@ module.exports = `
     }
     type Mutation{
         editGeneral(
-            biography: String
             email: String
             phone: String
+            biography: String
             facebook: String
             instagram: String
-            linkeding: String
+            linkedin: String
             adressStreet: String
             adressZip: String
             adressCountry: String
