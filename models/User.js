@@ -19,7 +19,7 @@ const userSchema = new Schema({
         unique: true,
         required: 'Can\'t be empty',
         minlength: [4, 'Need to be at least 4 characters'],
-        maxlength: [15, 'Need to be at most 15 characters']
+        maxlength: [20, 'Need to be at most 20 characters']
     },
     firstname: {
         type: String,

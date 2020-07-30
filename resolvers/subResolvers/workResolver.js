@@ -118,17 +118,9 @@ module.exports = {
                         message: 'Work has not change.'
                     }]
                 };
-                const existedTitle = await Work.findOne({ title: params.title });
-                if(existedTitle) return {
-                    OK: false,
-                    errors: [{
-                        path: 'title',
-                        message: 'Title already exist.'
-                    }]
-                };
                 const updatedWork = await Work.findByIdAndUpdate(workId,
                     { ...params, updatedBy: _id },
-                    { new: true }
+                    { new: true, runValidators: true, context: 'query' }
                 );
                 if("types" in params){
                     const removeTypes = oldTypes.filter(type => !params.types.includes(type));

@@ -155,7 +155,7 @@ const transformImage = image => ({
     createdBy: () => userGetter(image.createdBy),
     works: () => worksGetter(image.works),
     contents: () => contentsGetter(image.contents),
-    user: () => userGetter(image.user)
+    users: () => usersGetter(image.users)
 });
 const imagesLoader = new DataLoader(imageIds => images(imageIds));
 const images = async imageIds => {
@@ -331,7 +331,7 @@ const userGetter = async function(userId){
 };
 const usersGetter = async function(userIds){
     let users;
-    if(!!userIds.length) users = await usersLoader.load(userIds);
+    if(!!userIds.length) users = await usersLoader.loadMany(userIds);
     else users = [];
     return users;
 };

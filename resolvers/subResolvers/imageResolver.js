@@ -1,6 +1,7 @@
 const Image = require('../../models/Image');
 const Work = require('../../models/Work');
 const Content = require('../../models/Content');
+const User = require('../../models/User');
 const cloudinary = require('cloudinary').v2;
 const { requiresAuth } = require('../../util/permissions');
 const { transformImage } = require('../../util/merge');
@@ -136,7 +137,7 @@ module.exports = {
         }),
         deleteImage: requiresAuth.createResolver(async (_, { imageId }) =>{
             try{
-                const { filename, works, contents } = await Image.findByIdAndDelete(imageId);
+                const { filename, works, contents, users } = await Image.findByIdAndDelete(imageId);
                 await cloudinary.uploader.destroy(filename,(err, res) => {
                     if(res) console.log(res);
                     if(err) throw new Error(err);
@@ -148,6 +149,10 @@ module.exports = {
                 if(contents.length) await Content.updateMany(
                     { _id: { $in: contents } },
                     { $set: { image: null } }
+                );
+                if(users.length) await User.updateMany(
+                    { _id: { $in: users } },
+                    { $set: { profilePicture: null } }
                 );
                 return true;
             } catch(err) {
