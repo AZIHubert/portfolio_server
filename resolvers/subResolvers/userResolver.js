@@ -9,9 +9,12 @@ const { SECRET, SECRET2, ADMINREGISTRATION } = require('../../config');
 
 module.exports = {
     Query: {
-        getUsers: requiresAdmin.createResolver(async () => {
+        getUsers: requiresAdmin.createResolver(async (_, { sort, filter, skip, limit }) => {
             try {
-                let users = await User.find();
+                let users = await User.find(normalizeFilter(filter))
+                    .sort(normalizeSorting(sort))
+                    .skip(skip).limit(limit)
+                    .collation({ locale: "en" });
                 return users.map(user => transformUser(user));
             } catch (err) {
                 console.log(err);
@@ -286,7 +289,7 @@ module.exports = {
                 OK: false,
                 errors: [{
                     path: 'general',
-                    message: 'You only can delete your own account.'
+                    message: 'You only able to delete your own account.'
                 }]
             };
             try{
@@ -304,7 +307,7 @@ module.exports = {
                     { _id: { $in: profilePicture } },
                     { $pull: { users: { $in: userId } } }
                 );
-                return { OK: true }
+                return { OK: true, errors }
             } catch (err) {
                 console.log(err);
                 if (err.name == 'ValidationError') {

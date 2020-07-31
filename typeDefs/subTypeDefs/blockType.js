@@ -8,6 +8,7 @@ module.exports = `
     }
 
     input BlockFilter {
+        _id: StringFilter
         part: StringFilter
         index: IntFilter
         size: IntFilter

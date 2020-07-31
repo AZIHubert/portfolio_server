@@ -12,6 +12,33 @@ module.exports = `
         profilePicture: Image
         isActive: Boolean!
     }
+
+    input UserFilter {
+        _id: StringFilter
+        username: StringFilter
+        firstname: StringFilter
+        lastname: StringFilter
+        email: StringFilter
+        createdAt: IntFilter
+        isAdmin: Boolean
+        isActive: Boolean
+        
+        and: [UserFilter!]
+        or: [UserFilter!]
+        not: UserFilter
+    }
+
+    enum UserSortableField {
+        username
+        firstname
+        lastname
+        email
+        createdAt
+    }
+    input UserSort {
+        field: UserSortableField
+        order: SortOrder = ASC
+    }
     
     type userResponse{
         OK: Boolean!
@@ -30,7 +57,7 @@ module.exports = `
     }
     
     type Query{
-        getUsers: [User!]
+        getUsers(skip: Int, limit: Int, sort: [UserSort!], filter: UserFilter): [User!]
         getUser(userId: ID!): User!
     }
     type Mutation{
