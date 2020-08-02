@@ -190,13 +190,13 @@ module.exports = {
         moveContent: requiresAuth.createResolver(async (_, { contentId,  index}) => {
             try {
                 let content = await Content.findById(contentId);
-                const contents = await Content.find({
-                    block: content.block
-                });
-                if(index < 0 || index > contents.length - 1)
-                    throw new Error('Index out of range');
+                const contents = await Content.find({ block: content.block });
+
+                if(index < 0 || index > contents.length - 1) return { OK: false, errors: [{ path: 'general', message: 'Index' }] };
+
                 let oldIndex = content.index;
                 content.index = index;
+
                 await Content.updateMany({
                     $and: [
                         {_id: {$ne: contentId}},
@@ -216,11 +216,10 @@ module.exports = {
                     $inc: {index: 1}
                 });
                 await content.save();
-                let editedContents = await Content.find({
-                    block: content.block
-                }).sort({index: 1});
+
+                let editedContents = await Content.find({ block: content.block }).sort({index: 1});
                 editedContents = editedContents.map(content => transformContent(content));
-                return editedContents;
+                return { OK: true, errors: [], contents: editedContents };
             } catch(err) {
                 console.log(err);
                 throw new Error(err);

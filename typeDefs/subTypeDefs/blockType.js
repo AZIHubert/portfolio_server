@@ -28,20 +28,30 @@ module.exports = `
         order: SortOrder = ASC
     }
 
-    type blockResponse{
+    type BlockResponse {
         OK: Boolean!
         block: Block
         errors: [Error!]
     }
+    type MoveBlockResponse {
+        OK: Boolean
+        blocks: [Block!]
+        errors: [Error!]
+    }
 
     type Query{
-        getBlocks(skip: Int, limit: Int, sort: [BlockSort!], filter: BlockFilter): [Block!]
+        getBlocks(
+            skip: Int
+            limit: Int
+            sort: [BlockSort!]
+            filter: BlockFilter
+        ): [Block!]
         getBlock(blockId: ID): Block!
     }
     type Mutation{
-        createBlock(partId: ID! size: Int!): blockResponse!
-        updateBlock(blockId: ID! size: Int!): blockResponse!
-        moveBlock(blockId: ID! index: Int!): [Block!]!
+        createBlock(partId: ID! size: Int!): BlockResponse!
+        updateBlock(blockId: ID! size: Int!): BlockResponse!
+        moveBlock(blockId: ID! index: Int!): MoveBlockResponse!
         deleteBlock(blockId: ID!): Boolean!
     }
 `;

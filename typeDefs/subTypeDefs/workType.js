@@ -42,20 +42,45 @@ module.exports = `
         order: SortOrder = ASC
     }
 
-    type workResponse{
+    type WorkResponse{
         OK: Boolean!
         work: Work
         errors: [Error!]
     }
+    type MoveWorkResponse {
+        OK: Boolean
+        works: [Work!]
+        errors: [Error!]
+    }
 
     type Query{
-        getWorks(skip: Int, limit: Int, sort: [WorkSort!], filter: WorkFilter): [Work!]
+        getWorks(
+            skip: Int
+            limit: Int
+            sort: [WorkSort!]
+            filter: WorkFilter
+        ): [Work!]
         getWork(workId: ID): Work!
     }
     type Mutation{
-        createWork(title: String!, date: Int, titleColor: String, display: Boolean, types: [ID], thumbnail: ID): workResponse!
-        updateWork(workId: ID!, title: String, date: Int, titleColor: String, display: Boolean, types: [ID!], thumbnail: ID): workResponse!
-        moveWork(workId: ID!, index: Int!): [Work!]!
+        createWork(
+            title: String!
+            date: Int
+            titleColor: String
+            display: Boolean
+            types: [ID]
+            thumbnail: ID
+        ): WorkResponse!
+        updateWork(
+            workId: ID!
+            title: String
+            date: Int
+            titleColor: String
+            display: Boolean
+            types: [ID!]
+            thumbnail: ID
+        ): WorkResponse!
+        moveWork(workId: ID! index: Int!): MoveWorkResponse!
         deleteWork(workId: ID!): Boolean!
     }
 `;

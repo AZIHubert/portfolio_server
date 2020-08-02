@@ -171,10 +171,12 @@ module.exports = {
             try {
                 const works = await Work.find();
                 let work = await Work.findById(workId);
-                if(index < 0 || index > works.length - 1)
-                    throw new Error('Index out of range');
+
+                if(index < 0 || index > works.length - 1) return { OK: false, errors: [{ path: 'general', message: 'Index' }] };
+
                 let oldIndex = work.index;
                 work.index = index;
+
                 await Work.updateMany({
                     $and: [
                         {_id: {$ne: workId}},
@@ -192,9 +194,10 @@ module.exports = {
                     $inc: {index: 1}
                 });
                 await work.save();
+
                 let editedWorks = await Work.find().sort({index: 1});
                 editedWorks = editedWorks.map(work => transformWork(work));
-                return editedWorks;
+                return { OK: true, errors: [], works: editedWorks };
             } catch(err) {
                 console.log(err);
                 throw new Error(err);

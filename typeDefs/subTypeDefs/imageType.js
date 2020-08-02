@@ -37,7 +37,7 @@ module.exports = `
         getImage(imageId: ID!): Image!
     }
     type Mutation{
-        uploadImage(upload: Upload!): imageResponse!
+        createImage(upload: Upload!): imageResponse!
         updateImage(imageId: ID! title: String): imageResponse!
         deleteImage(imageId: ID): Boolean!
     }

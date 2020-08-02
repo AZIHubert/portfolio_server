@@ -40,11 +40,17 @@ module.exports = `
         order: SortOrder = ASC
     }
 
-    type partResponse{
+    type partResponse {
         OK: Boolean!
         part: Part
         errors: [Error!]
     }
+    type movePartResponse {
+        OK: Boolean
+        parts: [Part!]
+        errors: [Error!]
+    }
+
     type Query{
         getParts(skip: Int, limit: Int, sort: [PartSort!], filter: PartFilter): [Part!]
         getPart(partId: ID): Part!
@@ -72,7 +78,7 @@ module.exports = `
             paddingBottom: Int
             spacing: Int
         ): partResponse!
-        movePart(partId: ID!, index: Int!): [Part!]!
+        movePart(partId: ID!, index: Int!): movePartResponse!
         deletePart(partId: ID!): Boolean!
     }
 `;

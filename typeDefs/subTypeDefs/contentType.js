@@ -39,6 +39,11 @@ module.exports = `
         content: Content
         errors: [Error!]
     }
+    type moveContentResponse {
+        OK: Boolean
+        contents: [Content!]
+        errors: [Error!]
+    }
 
     type Query{
         getContents(skip: Int, limit: Int, sort: [ContentSort!], filter: ContentFilter): [Content!]
@@ -66,7 +71,7 @@ module.exports = `
             textAlign: String
             body: String
         ): contentResponse!
-        moveContent(contentId: ID! index: Int!): [Content!]!
+        moveContent(contentId: ID! index: Int!): moveContentResponse!
         deleteContent(contentId: ID!): Boolean!
     }
 `;

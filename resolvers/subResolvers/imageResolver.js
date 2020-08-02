@@ -46,7 +46,7 @@ module.exports = {
         }
     },
     Mutation: {
-        uploadImage: requiresAuth.createResolver(async (_, { upload }, { user: { _id }}) => {
+        createImage: requiresAuth.createResolver(async (_, { upload }, { user: { _id }}) => {
             const errors = [];
             try {
                 const { createReadStream } = await upload;
@@ -56,12 +56,8 @@ module.exports = {
                         .upload_stream({
                             upload_preset: CLOUDINARY_UPLOAD_PRESET
                         }, (err, res) => {
-                        if(res) {
-                            resolve(res)
-                        } else {
-                            console.log(err)
-                            reject(err);
-                        }
+                        if (res) resolve(res);
+                        else reject(err);
                     });
                     fileStream.pipe(cloudStream);
                 });

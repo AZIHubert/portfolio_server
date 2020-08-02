@@ -23,7 +23,7 @@ module.exports = `
         getGeneral: General!
     }
     type Mutation{
-        editGeneral(
+        updateGeneral(
             email: String
             phone: String
             biography: String

@@ -18,7 +18,7 @@ module.exports = {
         }
     },
     Mutation: {
-        editGeneral: requiresAuth.createResolver(async (_, { ...params }, { user: _id }) => {
+        updateGeneral: requiresAuth.createResolver(async (_, { ...params }, { user: _id }) => {
             const errors = [];
             try {
                 const existedGeneral = await General.findOne();
