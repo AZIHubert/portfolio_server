@@ -13,14 +13,14 @@ module.exports = {
                     .skip(skip).limit(limit);
                 return traineeships.map(traineeship => transformTraineeship(traineeship));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getTraineeship(_, { traineeshipId }){
             try {
                 let traineeship = await Traineeship.findById(traineeshipId);
                 return transformTraineeship(traineeship);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -39,8 +39,7 @@ module.exports = {
                     errors,
                     traineeship: transformTraineeship(savedTraineeship)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -92,8 +91,7 @@ module.exports = {
                     errors,
                     traineeship: transformTraineeship(updatedTraineeship)
                 };
-            } catch(e) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -114,9 +112,8 @@ module.exports = {
             try{
                 await Traineeship.remove({ _id: traineeshipId });
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

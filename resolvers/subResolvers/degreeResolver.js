@@ -13,14 +13,14 @@ module.exports = {
                     .skip(skip).limit(limit);
                 return degrees.map(degree => transformDegree(degree));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getDegree(_, { degreeId }){
             try {
                 let degree = await Degree.findById(degreeId);
                 return transformDegree(degree);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -39,8 +39,7 @@ module.exports = {
                     errors,
                     degree: transformDegree(savedDegree)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -103,8 +102,7 @@ module.exports = {
                     errors,
                     degree: transformDegree(updatedDegree)
                 };
-            } catch(e) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -125,9 +123,8 @@ module.exports = {
             try{
                 await Degree.remove({ _id: degreeId });
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

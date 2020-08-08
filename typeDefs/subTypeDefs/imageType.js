@@ -6,21 +6,48 @@ module.exports = `
         width: Int!
         height: Int!
         size: String!
-        createdAt: String!
-        createdBy: User
         works: [Work!]
         users: [User!]
         contents: [Content!]
         title: String
+        createdBy: User
+        createdAt: String!
+        updatedBy: User
+        updatedAt: String!
+    }
+
+    input ImageFilter {
+        _id: StringFilter
+        filename: StringFilter
+        url: StringFilter
+        width: StringFilter
+        height: StringFilter
+        size: StringFilter
+        works: StringFilter
+        users: StringFilter
+        contents: StringFilter
+        title: StringFilter
+        createdBy: StringFilter
+        createdAt: StringFilter
+        updatedBy: StringFilter
+        updatedAt: StringFilter
+        
+        and: [ImageFilter!]
+        or: [ImageFilter!]
+        not: ImageFilter
     }
 
     enum ImageSortableField {
-        title
-        createdAt
         filename
+        url
         width
         height
+        size
+        title
+        createdAt
+        updatedAt
     }
+    
     input ImageSort {
         field: ImageSortableField
         order: SortOrder = ASC
@@ -33,7 +60,12 @@ module.exports = `
     }
 
     type Query{
-        getImages(skip: Int, limit: Int, sort: [ImageSort!]): [Image]!
+        getImages(
+            skip: Int
+            limit: Int
+            sort: [ImageSort!]
+            filter: ImageFilter
+        ): [Image]!
         getImage(imageId: ID!): Image!
     }
     type Mutation{

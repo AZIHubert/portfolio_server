@@ -6,18 +6,23 @@ module.exports = `
         school: String!
         schoolLink: String
         year: Int!
-        createdAt: String!
         createdBy: User!
-        updatedAt: String
+        createdAt: String!
         updatedBy: User
+        updatedAt: String!
     }
 
     input DegreeFilter {
+        _id: StringFilter
+        city: StringFilter
         degree: StringFilter
         school: StringFilter
+        schoolLink: StringFilter
         year: IntFilter
         createdBy: StringFilter
+        createdAt: StringFilter
         updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [DegreeFilter!]
         or: [DegreeFilter!]
@@ -28,6 +33,7 @@ module.exports = `
         city
         degree
         school
+        schoolLink
         year
         createdBy
         updatedBy
@@ -44,7 +50,12 @@ module.exports = `
     }
 
     type Query{
-        getDegrees(skip: Int, limit: Int, sort: [DegreeSort!], filter: DegreeFilter): [Degree!]
+        getDegrees(
+            skip: Int
+            limit: Int
+            sort: [DegreeSort!]
+            filter: DegreeFilter
+        ): [Degree!]
         getDegree(degreeId: ID): Degree!
     }
 

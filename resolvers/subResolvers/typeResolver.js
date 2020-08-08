@@ -15,14 +15,14 @@ module.exports = {
                     .collation({ locale: "en" });
                 return types.map(type => transformType(type));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getType(_, { typeId }){
             try {
                 let type = await Type.findById(typeId);
                 return transformType(type);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -38,8 +38,7 @@ module.exports = {
                     errors,
                     type: transformType(saveType)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -86,7 +85,6 @@ module.exports = {
                     type: transformType(updatedType)
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -111,8 +109,8 @@ module.exports = {
                     {  $pull: { types: typeId } }
                 );
                 return true;
-            } catch(err) {
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

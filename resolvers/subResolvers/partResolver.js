@@ -17,14 +17,14 @@ module.exports = {
                     .skip(skip).limit(limit);
                 return parts.map(part => transformPart(part));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getPart(_, { partId }){
             try {
                 let part = await Part.findById(partId);
                 return transformPart(part);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -48,8 +48,7 @@ module.exports = {
                     errors,
                     part: transformPart(savedPart)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -116,7 +115,6 @@ module.exports = {
                     part: transformPart(updatedPart)
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -166,8 +164,7 @@ module.exports = {
                 let editedParts = await Part.find({ work: part.work }).sort({index: 1});
                 editedParts = editedParts.map(part => transformPart(part));
                 return { OK: true, errors: [], parts: editedParts };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 throw new Error(err);
             }
         }),
@@ -204,9 +201,8 @@ module.exports = {
                     }
                 }
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

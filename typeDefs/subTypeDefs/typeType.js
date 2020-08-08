@@ -3,16 +3,20 @@ module.exports = `
         _id: ID!
         title: String!
         works: [Work!]
-        createdAt: String!
         createdBy: User!
-        updatedAt: String
+        createdAt: String!
         updatedBy: User
+        updatedAt: String!
     }
 
     input TypeFilter {
+        _id: StringFilter
         title: StringFilter
-        date: IntFilter
         works: ArrayStringsFilter
+        createdBy: StringFilter
+        createdAt: StringFilter
+        updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [TypeFilter!]
         or: [TypeFilter!]

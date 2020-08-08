@@ -10,16 +10,26 @@ module.exports = `
         variant: String
         textAlign: String
         body: String
-        createdAt: String!
         createdBy: User!
-        updatedAt: String
+        createdAt: String!
         updatedBy: User
+        updatedAt: String!
     }
 
     input ContentFilter {
-        block: StringFilter
+        _id: StringFilter
         index: IntFilter
+        block: StringFilter
+        paddingTop: IntFilter
         type: StringFilter
+        color: StringFilter
+        variant: StringFilter
+        textAlign: StringFilter
+        body: StringFilter
+        createdBy: StringFilter
+        createdAt: StringFilter
+        updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [ContentFilter!]
         or: [ContentFilter!]
@@ -46,7 +56,12 @@ module.exports = `
     }
 
     type Query{
-        getContents(skip: Int, limit: Int, sort: [ContentSort!], filter: ContentFilter): [Content!]
+        getContents(
+            skip: Int
+            limit: Int
+            sort: [ContentSort!]
+            filter: ContentFilter
+        ): [Content!]
         getContent(contentId: ID): Content!
     }
 

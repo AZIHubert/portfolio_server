@@ -19,14 +19,14 @@ module.exports = {
                     .collation({ locale: "en" });
                 return works.map(work => transformWork(work));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getWork(_, { workId }){
             try {
                 let work = await Work.findById(workId);
                 return transformWork(work);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -64,8 +64,7 @@ module.exports = {
                     errors,
                     work: transformWork(savedWork)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -150,7 +149,6 @@ module.exports = {
                     work: transformWork(updatedWork)
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -198,8 +196,7 @@ module.exports = {
                 let editedWorks = await Work.find().sort({index: 1});
                 editedWorks = editedWorks.map(work => transformWork(work));
                 return { OK: true, errors: [], works: editedWorks };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 throw new Error(err);
             }
         }),
@@ -244,9 +241,8 @@ module.exports = {
                     }
                 }
                 return true
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

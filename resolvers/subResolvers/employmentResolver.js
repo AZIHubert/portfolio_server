@@ -13,14 +13,14 @@ module.exports = {
                     .skip(skip).limit(limit);
                 return employments.map(employment => transformEmployment(employment));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getEmployment(_, { employmentId }){
             try {
                 let employment = await Employment.findById(employmentId);
                 return transformEmployment(employment);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -39,8 +39,7 @@ module.exports = {
                     errors,
                     employment: transformEmployment(savedEmployment)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -101,8 +100,7 @@ module.exports = {
                     errors,
                     employment: transformEmployment(updatedEmployment)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -123,9 +121,8 @@ module.exports = {
             try{
                 await Employment.remove({ _id: employmentId });
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

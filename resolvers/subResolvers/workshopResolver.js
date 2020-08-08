@@ -13,14 +13,14 @@ module.exports = {
                     .skip(skip).limit(limit);
                 return workshops.map(workshop => transformWorkshop(workshop));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getWorkshop(_, { workshopId }){
             try {
                 let workshop = await Workshop.findById(workshopId);
                 return transformWorkshop(workshop);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -39,8 +39,7 @@ module.exports = {
                     errors,
                     workshop: transformWorkshop(savedWorkshop)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -92,8 +91,7 @@ module.exports = {
                     errors,
                     workshop: transformWorkshop(updatedWorkshop)
                 };
-            } catch(e) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -114,9 +112,8 @@ module.exports = {
             try{
                 await Workshop.remove({ _id: workShopId });
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

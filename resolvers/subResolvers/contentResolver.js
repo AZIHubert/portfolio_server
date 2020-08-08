@@ -12,17 +12,18 @@ module.exports = {
                 let contents = await Content
                     .find(normalizeFilter(filter))
                     .sort(normalizeSorting(sort))
-                    .skip(skip).limit(limit);
+                    .skip(skip).limit(limit)
+                    .collation({ locale: "en" });
                 return contents.map(content => transformContent(content));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getContent(_, { contentId }){
             try {
                 let content = await Content.findById(contentId);
                 return transformContent(content);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -69,8 +70,7 @@ module.exports = {
                     errors,
                     content: transformContent(savedContent)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -169,8 +169,7 @@ module.exports = {
                     errors,
                     content: transformContent(updatedContent)
                 };
-            } catch(e) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -220,8 +219,7 @@ module.exports = {
                 let editedContents = await Content.find({ block: content.block }).sort({index: 1});
                 editedContents = editedContents.map(content => transformContent(content));
                 return { OK: true, errors: [], contents: editedContents };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 throw new Error(err);
             }
         }),
@@ -246,9 +244,8 @@ module.exports = {
                     { $pull: { contents: contentId } }
                 );
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

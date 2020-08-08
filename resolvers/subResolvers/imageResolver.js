@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary').v2;
 const { requiresAuth } = require('../../util/permissions');
 const { transformImage } = require('../../util/merge');
 const { formatBytes } = require('../../util/normalizers');
-const { normalizeSorting } = require('../../util/normalizers');
+const { normalizeSorting, normalizeFilter } = require('../../util/normalizers');
 
 const {
     CLOUDINARY_CLOUD_NAME,
@@ -23,14 +23,15 @@ cloudinary.config({
 
 module.exports = {
     Query: {
-        async getImages(_, { sort, skip, limit }){
+        async getImages(_, { sort, filter, skip, limit }){
             try{
                 const images = await Image.find()
+                    .find(normalizeFilter(filter))
                     .sort(normalizeSorting(sort))
                     .skip(skip).limit(limit)
                     .collation({ locale: "en" });
                 return images.map(image => transformImage(image));
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         },
@@ -40,7 +41,7 @@ module.exports = {
             try{
                 let image = await Image.findById(imageId);
                 return transformImage(image);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -75,11 +76,11 @@ module.exports = {
                     errors,
                     image: transformImage(image)
                 };
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }),
-        updateImage : requiresAuth.createResolver(async (_, { imageId, ...params }) =>{
+        updateImage : requiresAuth.createResolver(async (_, { imageId, ...params }, { user: _id }) =>{
             const errors = [];
             try{
                 let {
@@ -105,7 +106,7 @@ module.exports = {
                     }]
                 };
                 const updatedImage = await Image.findByIdAndUpdate(imageId,
-                    { ...params },
+                    { ...params, updatedBy: _id },
                     { new: true }
                 );
                 return {
@@ -113,8 +114,7 @@ module.exports = {
                     errors,
                     image: transformImage(updatedImage)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -134,9 +134,8 @@ module.exports = {
         deleteImage: requiresAuth.createResolver(async (_, { imageId }) =>{
             try{
                 const { filename, works, contents, users } = await Image.findByIdAndDelete(imageId);
-                await cloudinary.uploader.destroy(filename,(err, res) => {
-                    if(res) console.log(res);
-                    if(err) throw new Error(err);
+                await cloudinary.uploader.destroy(filename, (err) => {
+                    if (err) throw new Error(err);
                 });
                 if(works.length) await Work.updateMany(
                     { _id: { $in: works } },
@@ -151,7 +150,7 @@ module.exports = {
                     { $set: { profilePicture: null } }
                 );
                 return true;
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }),

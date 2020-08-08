@@ -5,17 +5,22 @@ module.exports = `
         artistLink: String
         body: String!
         year: Int!
-        createdAt: String!
         createdBy: User!
-        updatedAt: String
+        createdAt: String!
         updatedBy: User
+        updatedAt: String
     }
 
     input WorkshopFilter {
+        _id: StringFilter
         artist: StringFilter
+        artistLink: StringFilter
+        body: StringFilter
         year: IntFilter
         createdBy: StringFilter
+        createdAt: StringFilter
         updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [WorkshopFilter!]
         or: [WorkshopFilter!]
@@ -24,9 +29,11 @@ module.exports = `
 
     enum WorkshopSortableField {
         artist
+        artistLink
+        body
         year
-        createdBy
-        updatedBy
+        createdAt
+        updatedAt
     }
     input WorkshopSort {
         field: WorkshopSortableField

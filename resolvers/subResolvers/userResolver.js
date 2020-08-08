@@ -17,7 +17,7 @@ module.exports = {
                     .collation({ locale: "en" });
                 return users.map(user => transformUser(user));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         }),
         getUser: requiresAuth.createResolver(async (_, { userId }, { user: { _id } }) => {
@@ -25,7 +25,7 @@ module.exports = {
                 if(_id.toString() !== userId) throw new Error('You only can fetch info of your account');
                 let user = await User.findById(userId);
                 return transformUser(user);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         })
@@ -41,8 +41,7 @@ module.exports = {
                     errors,
                     user: transformUser(savedUser)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -121,7 +120,6 @@ module.exports = {
                     user: transformUser(updatedUser)
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -155,7 +153,6 @@ module.exports = {
                     user: transformUser(updatedUser)
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -215,7 +212,6 @@ module.exports = {
                     refreshToken: createRefreshToken
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -266,7 +262,6 @@ module.exports = {
                     refreshToken: createRefreshToken
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -309,7 +304,6 @@ module.exports = {
                 );
                 return { OK: true, errors }
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({

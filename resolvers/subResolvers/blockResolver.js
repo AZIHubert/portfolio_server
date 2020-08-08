@@ -16,14 +16,14 @@ module.exports = {
                     .skip(skip).limit(limit);
                 return blocks.map(block => transformBlock(block));
             } catch (err) {
-                console.log(err);
+                throw new Error(err);
             }
         },
         async getBlock(_, { blockId }){
             try {
                 let block = await Block.findById(blockId);
                 return transformBlock(block);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -49,8 +49,7 @@ module.exports = {
                     errors,
                     block: transformBlock(savedBlock)
                 };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -96,7 +95,6 @@ module.exports = {
                     block: transformBlock(updatedBlock)
                 };
             } catch (err) {
-                console.log(err);
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({
@@ -146,8 +144,7 @@ module.exports = {
                 let editedBlocks = await Block.find({ part: block.part }).sort({index: 1});
                 editedBlocks = editedBlocks.map(block => transformBlock(block));
                 return { OK: true, errors: [], blocks: editedBlocks };
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 throw new Error(err);
             }
         }),
@@ -177,9 +174,8 @@ module.exports = {
                     }
                 }
                 return true;
-            } catch(err) {
-                console.log(err);
-                return false;
+            } catch (err) {
+                throw new Error(err);
             }
         })
     }

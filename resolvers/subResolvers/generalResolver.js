@@ -12,7 +12,7 @@ module.exports = {
                     general = await newGeneral.save();
                 }
                 return transformGeneral(general);
-            } catch(err) {
+            } catch (err) {
                 throw new Error(err);
             }
         }
@@ -73,8 +73,7 @@ module.exports = {
                     errors,
                     general: transformGeneral(general)
                 }
-            } catch(err) {
-                console.log(err);
+            } catch (err) {
                 if (err.name == 'ValidationError') {
                     for (const [key, value] of Object.entries(err.errors)) {
                         errors.push({

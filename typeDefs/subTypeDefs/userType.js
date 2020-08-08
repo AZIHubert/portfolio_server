@@ -5,12 +5,11 @@ module.exports = `
         firstname: String!
         lastname: String!
         email: String!
-        password: String!
-        createdAt: String!
-        updatedAt: String!
+        isActive: Boolean!
         isAdmin: Boolean!
         profilePicture: Image
-        isActive: Boolean!
+        createdAt: String!
+        updatedAt: String!
     }
 
     input UserFilter {
@@ -19,9 +18,11 @@ module.exports = `
         firstname: StringFilter
         lastname: StringFilter
         email: StringFilter
-        createdAt: IntFilter
-        isAdmin: Boolean
         isActive: Boolean
+        isAdmin: Boolean
+        profilePicture: StringFilter
+        createdAt: StringFilter
+        updatedAt: StringFilter
         
         and: [UserFilter!]
         or: [UserFilter!]
@@ -33,7 +34,10 @@ module.exports = `
         firstname
         lastname
         email
+        isActive
+        isAdmin
         createdAt
+        updatedAt
     }
     input UserSort {
         field: UserSortableField
@@ -90,7 +94,7 @@ module.exports = `
             userId: ID!
             adminRegistrationPassword: String!
         ): loginResponse!
-        loginUser(emailOrUsername: String!, password: String!): loginResponse!
+        loginUser(emailOrUsername: String! password: String!): loginResponse!
         deleteUser(userId: ID! password: String!): deleteResonse!
     }
 `;

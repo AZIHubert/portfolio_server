@@ -16,16 +16,16 @@ const blockSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Content'
     }],
-    createdAt: String,
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    editedAt: String,
-    editedBy: {
+    updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 module.exports = model('Block', blockSchema);

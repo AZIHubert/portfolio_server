@@ -8,20 +8,25 @@ module.exports = `
         yearFrom: Int!
         yearTo: Int
         currentWork: Boolean!
-        createdAt: String!
         createdBy: User!
-        updatedAt: String
+        createdAt: String!
         updatedBy: User
+        updatedAt: String!
     }
 
     input EmploymentFilter {
+        _id: StringFilter
+        body: StringFilter
         city: StringFilter
         company: StringFilter
+        companyLink: StringFilter
         yearFrom: IntFilter
         yearTo: IntFilter
         currentWork: Boolean
         createdBy: StringFilter
+        createdAt: StringFilter
         updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [EmploymentFilter!]
         or: [EmploymentFilter!]
@@ -29,10 +34,13 @@ module.exports = `
     }
 
     enum EmploymentSortableField {
+        body
         city
         company
+        companyLink
         yearFrom
         yearTo
+        currentWork
         createdBy
         updatedBy
     }

@@ -13,6 +13,7 @@ module.exports = `
     }
 
     input TraineeshipFilter {
+        _id: StringFilter
         city: StringFilter
         company: StringFilter
         year: IntFilter

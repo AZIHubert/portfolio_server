@@ -4,7 +4,11 @@ module.exports = `
         part: Part!
         index: Int!
         size: Int!
-        contents: [Content]
+        contents: [Content!]
+        createdBy: User!
+        createdAt: String!
+        updatedBy: User
+        updatedAt: String!
     }
 
     input BlockFilter {
@@ -13,6 +17,10 @@ module.exports = `
         index: IntFilter
         size: IntFilter
         contents: ArrayStringsFilter
+        createdBy: StringFilter
+        createdAt: StringFilter
+        updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [BlockFilter!]
         or: [BlockFilter!]
@@ -22,6 +30,8 @@ module.exports = `
     enum BlockSortableField {
         index
         size
+        createdAt
+        updatedAt
     }
     input BlockSort {
         field: BlockSortableField

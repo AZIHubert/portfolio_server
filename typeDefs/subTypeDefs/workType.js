@@ -9,20 +9,26 @@ module.exports = `
         display: Boolean!
         thumbnail: Image
         parts: [Part]
-        createdAt: String!
         createdBy: User!
-        updatedAt: String
+        createdAt: String!
         updatedBy: User
+        updatedAt: String!
     }
 
     input WorkFilter {
+        _id: StringFilter
         index: IntFilter
         title: StringFilter
         titleColor: StringFilter
         date: IntFilter
-        display: Boolean
         types: ArrayStringsFilter
+        display: Boolean
+        thumbnail: StringFilter
         parts: ArrayStringsFilter
+        createdBy: StringFilter
+        createdAt: StringFilter
+        updatedBy: StringFilter
+        updatedAt: StringFilter
         
         and: [WorkFilter!]
         or: [WorkFilter!]
@@ -34,6 +40,7 @@ module.exports = `
         title
         titleColor
         date
+        display
         createdAt
         updatedAt
     }
