@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const Block = require('../../models/Block');
 const Content = require('../../models/Content');
 const Degree = require('../../models/Degree');
@@ -10,11 +12,11 @@ const Type = require('../../models/Type');
 const User = require('../../models/User');
 const Work = require('../../models/Work');
 const Workshop = require('../../models/Workshop');
-const { tryLogin } = require('../../util/auth');
-const { unrequiresAuth, requiresAuth, requiresAdmin } = require('../../util/permissions');
+
+const { tryLogin, createTokens } = require('../../util/auth');
 const { transformUser } = require('../../util/merge');
-const bcrypt = require('bcryptjs');
-const { createTokens } = require('../../util/auth');
+const { unrequiresAuth, requiresAuth, requiresAdmin } = require('../../util/permissions');
+
 const { SECRET, SECRET2, ADMINREGISTRATION } = require('../../config');
 
 module.exports = {
@@ -26,25 +28,21 @@ module.exports = {
                     .skip(skip).limit(limit)
                     .collation({ locale: "en" });
                 return users.map(user => transformUser(user));
-            } catch (err) {
-                throw new Error(err);
-            }
+            } catch (err) { throw new Error(err); }
         }),
         getUser: requiresAuth.createResolver(async (_, { userId }, { user: { _id } }) => {
             try {
                 if(_id.toString() !== userId) throw new Error('You only can fetch info of your account');
                 let user = await User.findById(userId);
                 return transformUser(user);
-            } catch (err) {
-                throw new Error(err);
-            }
+            } catch (err) { throw new Error(err); }
         })
     },
     Mutation: {
         createUser: unrequiresAuth.createResolver(async (_, { ...params }) => {
             const errors = [];
             try {
-                const newUser = new User({...params});
+                const newUser = new User({ ...params });
                 const savedUser = await newUser.save();
                 return {
                     OK: true,
@@ -63,9 +61,7 @@ module.exports = {
                         OK: false,
                         errors
                     }
-                } else {
-                    throw new Error(err);
-                }
+                } else throw new Error(err);
             }
         }),
         loginUser: unrequiresAuth.createResolver(async (_, { emailOrUsername, password }, { SECRET, SECRET2 }) => {
@@ -73,14 +69,14 @@ module.exports = {
         }),
         updateUser: requiresAuth.createResolver(async (_, { userId, ...params }, { user: { _id } }) => {
             const errors = [];
-            if(_id.toString() !== userId) return {
+            if (_id.toString() !== userId) return {
                 OK: false,
                 errors: [{
                     path: 'general',
                     message: 'You only can modify your own account.'
                 }]
             };
-            try{
+            try {
                 let {
                     username: oldUsername,
                     firstname: oldFirstname,
@@ -89,16 +85,16 @@ module.exports = {
                 } = await User.findById(userId);
                 oldProfilePicture = oldProfilePicture ? oldProfilePicture.toString() : null;
 
-                if(oldProfilePicture === params.profilePicture)
+                if (oldProfilePicture === params.profilePicture)
                     delete params.profilePicture;
-                if(params.username === undefined || oldUsername === params.username)
+                if (params.username === undefined || oldUsername === params.username)
                     delete params.username;
-                if(params.firstname === undefined || oldFirstname === params.firstname)
+                if (params.firstname === undefined || oldFirstname === params.firstname)
                     delete params.firstname;
-                if(params.lastname === undefined || oldLastname === params.lastname)
+                if (params.lastname === undefined || oldLastname === params.lastname)
                     delete params.lastname;
 
-                if(!Object.keys(params).length) return {
+                if (!Object.keys(params).length) return {
                     OK: false,
                     errors: [{
                         path: 'general',
@@ -106,7 +102,7 @@ module.exports = {
                     }]
                 };
                 const existedUsername = await User.findOne({ username: params.username });
-                if(existedUsername) return {
+                if (existedUsername) return {
                     OK: false,
                     errors: [{
                         path: 'username',
@@ -114,7 +110,7 @@ module.exports = {
                     }]
                 };
                 const updatedUser = await User.findByIdAndUpdate(userId, params, { new: true, runValidators: true, context: 'query' });
-                if("profilePicture" in params){
+                if ("profilePicture" in params) {
                     await Image.findOneAndUpdate(
                         { _id: oldProfilePicture },
                         { $pull: { users: userId } }
@@ -141,21 +137,19 @@ module.exports = {
                         OK: false,
                         errors: errors
                     }
-                } else {
-                    throw new Error(err);
-                }
+                } else throw new Error(err);
             }
         }),
         updateUserEmail: requiresAuth.createResolver(async (_, { userId, email }, { user: { _id } }) => {
             const errors = [];
-            if(_id.toString() !== userId) return {
+            if (_id.toString() !== userId) return {
                 OK: false,
                 errors: [{
                     path: 'general',
                     message: 'You only can modify your own account.'
                 }]
             };
-            try{
+            try {
                 const updatedUser = await User.findByIdAndUpdate(userId, { email }, { new: true, runValidators: true, context: 'query' });
                 return {
                     OK: true,
@@ -174,24 +168,22 @@ module.exports = {
                         OK: false,
                         errors: errors
                     }
-                } else {
-                    throw new Error(err);
-                }
+                } else throw new Error(err);
             }
         }),
         updateUserPassword: requiresAuth.createResolver(async (_, { userId, oldPassword, password }, { user: { _id } }) => {
             const errors = [];
-            if(_id.toString() !== userId) return {
+            if (_id.toString() !== userId) return {
                 OK: false,
                 errors: [{
                     path: 'general',
                     message: 'You only can modify your own account.'
                 }]
             };
-            try{
+            try {
                 const user = await User.findById(userId);
                 const valid = await bcrypt.compare(oldPassword, user.password);
-                if(!valid) return {
+                if (!valid) return {
                     OK: false,
                     errors: [{
                         path: 'oldPassword',
@@ -199,7 +191,7 @@ module.exports = {
                     }]
                 };
                 const samePassword = await bcrypt.compare(password, user.password);
-                if(samePassword) return {
+                if (samePassword) return {
                     OK: false,
                     errors: [{
                         path: 'password',
@@ -233,29 +225,27 @@ module.exports = {
                         OK: false,
                         errors: errors
                     }
-                } else {
-                    throw new Error(err);
-                }
+                } else throw new Error(err);
             }
         }),
         updateUserAdmin: requiresAuth.createResolver(async (_, { userId, adminRegistrationPassword }, { user: { _id } }) => {
             const errors = [];
-            if(_id.toString() !== userId) return {
+            if (_id.toString() !== userId) return {
                 OK: false,
                 errors: [{
                     path: 'general',
                     message: 'You only can modify your own account.'
                 }]
             };
-            try{
-                if(adminRegistrationPassword.trim() === '') return {
+            try {
+                if (adminRegistrationPassword.trim() === '') return {
                     OK: false,
                     errors: [{
                         path: 'adminRegistrationPassword',
                         message: 'Can\'t be empty.'
                     }]
                 };
-                if(adminRegistrationPassword !== ADMINREGISTRATION) return {
+                if (adminRegistrationPassword !== ADMINREGISTRATION) return {
                     OK: false,
                     errors: [{
                         path: 'adminRegistrationPassword',
@@ -283,24 +273,22 @@ module.exports = {
                         OK: false,
                         errors: errors
                     }
-                } else {
-                    throw new Error(err);
-                }
+                } else throw new Error(err);
             }
         }),
         deleteUser: requiresAuth.createResolver(async (_, { userId, password }, { user: { _id } }) => {
             const errors = [];
-            if(_id.toString() !== userId) return {
+            if (_id.toString() !== userId) return {
                 OK: false,
                 errors: [{
                     path: 'general',
                     message: 'You only able to delete your own account.'
                 }]
             };
-            try{
+            try {
                 const user = await User.findById(userId);
                 const valid = await bcrypt.compare(password, user.password);
-                if(!valid) return {
+                if (!valid) return {
                     OK: false,
                     errors: [{
                         path: 'password',
@@ -308,7 +296,7 @@ module.exports = {
                     }]
                 };
                 const { profilePicture } = await User.deleteOne({ _id: userId });
-                if(!!profilePicture) await Image.updateMany(
+                if (!!profilePicture) await Image.updateMany(
                     { _id: { $in: profilePicture } },
                     { $pull: { users: { $in: userId } } }
                 );
@@ -409,10 +397,8 @@ module.exports = {
                         OK: true,
                         errors
                     }
-                } else {
-                    throw new Error(err);
-                }
+                } else throw new Error(err);
             }
         })
     }
-}
+};
