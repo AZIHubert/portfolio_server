@@ -1,5 +1,15 @@
-const User = require('../../models/User');
+const Block = require('../../models/Block');
+const Content = require('../../models/Content');
+const Degree = require('../../models/Degree');
+const Employment = require('../../models/Employment');
+const General = require('../../models/General');
 const Image = require('../../models/Image');
+const Part = require('../../models/Part');
+const Traineeship = require('../../models/Traineeship');
+const Type = require('../../models/Type');
+const User = require('../../models/User');
+const Work = require('../../models/Work');
+const Workshop = require('../../models/Workshop');
 const { tryLogin } = require('../../util/auth');
 const { unrequiresAuth, requiresAuth, requiresAdmin } = require('../../util/permissions');
 const { transformUser } = require('../../util/merge');
@@ -301,6 +311,90 @@ module.exports = {
                 if(!!profilePicture) await Image.updateMany(
                     { _id: { $in: profilePicture } },
                     { $pull: { users: { $in: userId } } }
+                );
+                await Block.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Block.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Content.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Content.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Degree.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Degree.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Employment.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Employment.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await General.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Image.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Image.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Part.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Part.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Traineeship.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Traineeship.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Type.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Type.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Work.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Work.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
+                );
+                await Workshop.updateMany(
+                    { createdBy: userId },
+                    { $set: { createdBy: null } }
+                );
+                await Workshop.updateMany(
+                    { updatedBy: userId },
+                    { $set: { updatedBy: null } }
                 );
                 return { OK: true, errors }
             } catch (err) {
