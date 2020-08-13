@@ -34,6 +34,7 @@ const connect = async () => {
             useFindAndModify: false
         });
         console.log('Connected to mongo ATLAS');
+        console.log(process.env.PORT);
         app.listen({ port }, () => console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`));
     } catch(err) {
         console.log(err);
