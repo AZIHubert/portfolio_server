@@ -4,7 +4,7 @@ const { ApolloServer } = require('apollo-server-express');
 
 const { MONGODB, SECRET, SECRET2 } = require('./config');
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 const typeDefs = require('./typeDefs/rootTypeDef.js');
 const resolvers = require('./resolvers/rootResolver.js');
