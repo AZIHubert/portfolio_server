@@ -10,6 +10,7 @@ const traineeshipResolver = require('./subResolvers/traineeshipResolver');
 const workshopResolver = require('./subResolvers/workshopResolver');
 const employmentResolver = require('./subResolvers/employmentResolver');
 const generalResolver = require('./subResolvers/generalResolver');
+const emailResolver = require('./subResolvers/emailResolver');
 
 module.exports = {
     Query: {
@@ -38,6 +39,7 @@ module.exports = {
         ...traineeshipResolver.Mutation,
         ...workshopResolver.Mutation,
         ...employmentResolver.Mutation,
-        ...generalResolver.Mutation
+        ...generalResolver.Mutation,
+        ...emailResolver.Mutation
     }
 };
